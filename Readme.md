@@ -1,7 +1,7 @@
 # Личный проект «Угадай мелодию» [![Build status][travis-image]][travis-url]
 
 * Студент: [Андрей Конопков](https://up.htmlacademy.ru/ecmascript/3/user/509237).
-* Наставник: `Неизвестно`.
+* Наставник: [Роман Чаругин](https://htmlacademy.ru/profile/id345379).
 
 ---
 
