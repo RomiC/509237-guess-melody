@@ -18,7 +18,7 @@ const onKeyPress = (e) => {
   if (e.altKey && e.key === `ArrowLeft`) {
     newScreenIndex = Math.max(currentScreenIndex - 1, 0);
   } else if (e.altKey && e.key === `ArrowRight`) {
-    newScreenIndex = Math.min(Math.max(appScreensList.length - 1), currentScreenIndex + 1);
+    newScreenIndex = Math.min(appScreensList.length - 1, currentScreenIndex + 1);
   }
 
   if (newScreenIndex !== currentScreenIndex) {
