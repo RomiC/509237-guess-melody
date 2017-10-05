@@ -13,11 +13,16 @@ switchAppScreen(currentScreenIndex, appScreensList);
 
 const onKeyPress = (e) => {
 
+  let newScreenIndex = currentScreenIndex;
+
   if (e.altKey && e.key === `ArrowLeft`) {
-    currentScreenIndex = currentScreenIndex ? currentScreenIndex - 1 : currentScreenIndex;
-    switchAppScreen(currentScreenIndex, appScreensList);
+    newScreenIndex = Math.max(currentScreenIndex - 1, 0);
   } else if (e.altKey && e.key === `ArrowRight`) {
-    currentScreenIndex = currentScreenIndex === appScreensList.length - 1 ? currentScreenIndex : currentScreenIndex + 1;
+    newScreenIndex = Math.min(Math.max(appScreensList.length - 1), currentScreenIndex + 1);
+  }
+
+  if (newScreenIndex !== currentScreenIndex) {
+    currentScreenIndex = newScreenIndex;
     switchAppScreen(currentScreenIndex, appScreensList);
   }
 };
