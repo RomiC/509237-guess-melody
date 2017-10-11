@@ -35,27 +35,23 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 };
 
 const getResultString = (statistics = [], result) => {
-  let resultString = ``;
-
   if (result.timeLeft === 0) {
-    resultString = `Время вышло! Вы не успели отгадать все мелодии`;
-  } else if (result.notesLeft === 0) {
-    resultString = `У вас закончились все попытки. Ничего, повезёт в следующий раз!`;
-  } else {
-
-    statistics.push(result.scoreCount);
-    statistics.sort((a, b) => a - b);
-
-    const statisticsCount = statistics.length;
-    const betterResultsCount = statistics.findIndex((it) => it === result.scoreCount);
-    const resultPlace = statisticsCount - betterResultsCount;
-    const resultPercent = (betterResultsCount / statisticsCount) * 100;
-
-    resultString = `Вы заняли ${resultPlace}-ое место из ${statisticsCount} игроков. Это лучше чем у ${resultPercent}% игроков`;
+    return `Время вышло! Вы не успели отгадать все мелодии`;
   }
 
+  if (result.notesLeft === 0) {
+    return `У вас закончились все попытки. Ничего, повезёт в следующий раз!`;
+  }
 
-  return resultString;
+  statistics.push(result.scoreCount);
+  statistics.sort((a, b) => a - b);
+
+  const statisticsCount = statistics.length;
+  const betterResultsCount = statistics.findIndex((it) => it === result.scoreCount);
+  const resultPlace = statisticsCount - betterResultsCount;
+  const resultPercent = (betterResultsCount / statisticsCount) * 100;
+
+  return `Вы заняли ${resultPlace}-ое место из ${statisticsCount} игроков. Это лучше чем у ${resultPercent}% игроков`;
 };
 
 const getTimer = (value) => {
