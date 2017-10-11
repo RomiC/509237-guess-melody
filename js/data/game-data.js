@@ -5,23 +5,30 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10, timeLef
   // Если игрок ответил меньше, чем на 10 вопросов, то игра считается непройденой и функция должна вернуть -1
   if (answersArray.length < totalQuestions) {
     scoreCount = -1;
-  } else {
-    // Подсчет баллов если все 10 вопросов отвечены
-    answersArray.forEach((item) => {
-      if (item.isCorrect) {
-        // За правильный ответ 1 балл
-        if (item.time >= 30) {
-          scoreCount += 1;
-        } else {
-          // За быстрый правильный ответ (менее 30 секунд) — 2 балла
-          scoreCount += 2;
-        }
-      }
-    });
-
-    // За каждую соверешнную ошибку вычитается 2 балла, но в 0 уйти нельзя
-    scoreCount = Math.max(0, scoreCount - (3 - notesLeft));
+    return {scoreCount, notesLeft, timeLeft};
   }
+
+  // Подсчет баллов если все 10 вопросов отвечены
+  scoreCount = answersArray.reduce((accumulator, currentAnswer) => {
+
+    let scoreAnswer = 0;
+
+    if (currentAnswer.isCorrect) {
+      // За правильный ответ 1 балл
+      if (currentAnswer.time >= 30) {
+        scoreAnswer = 1;
+      } else {
+        // За быстрый правильный ответ (менее 30 секунд) — 2 балла
+        scoreAnswer = 2;
+      }
+    }
+
+    return accumulator + scoreAnswer;
+  }, 0);
+
+  // За каждую соверешнную ошибку вычитается 2 балла, но в 0 уйти нельзя
+  scoreCount = Math.max(0, scoreCount - (3 - notesLeft));
+
 
   return {scoreCount, notesLeft, timeLeft};
 
