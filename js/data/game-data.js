@@ -57,13 +57,12 @@ const getResultString = (statistics = [], result) => {
 const getTimer = (value) => {
   return {
     value,
-    done: (value === 0),
     tick() {
-      if (this.done) {
-        return getTimer(this.value);
-      } else {
-        return getTimer(this.value - 1);
+      if (this.value > 0) {
+        this.value -= 1;
       }
+
+      return {value: this.value, done: this.value === 0};
     },
   };
 };

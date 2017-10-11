@@ -66,26 +66,26 @@ describe(`getResultString`, () => {
 
 describe(`getTimer`, () => {
   describe(`#getTimer`, () => {
-    it(`should timer.value = 29 and timer.done = false when tick getTimer(30)`, () => {
+    it(`should return timer.value = 29 and timer.done = false when tick getTimer(30)`, () => {
       let timer = getTimer(30);
-      timer = timer.tick();
-      assert.equal(29, timer.value);
-      assert.equal(false, timer.done);
+      const timerResult = timer.tick();
+      assert.equal(29, timerResult.value);
+      assert.equal(false, timerResult.done);
     });
     it(`should return timer.value = 0 and timer.done = true when tick getTimer(2) two times`, () => {
       let timer = getTimer(2);
-      timer = timer.tick();
-      timer = timer.tick();
-      assert.equal(0, timer.value);
-      assert.equal(true, timer.done);
+      timer.tick();
+      const timerResult = timer.tick();
+      assert.equal(0, timerResult.value);
+      assert.equal(true, timerResult.done);
     });
     it(`should return 0, not a negative value when tick a timer that is already done`, () => {
       let timer = getTimer(2);
-      timer = timer.tick();
-      timer = timer.tick();
-      timer = timer.tick();
-      assert.equal(0, timer.value);
-      assert.equal(true, timer.done);
+      timer.tick();
+      timer.tick();
+      const timerResult = timer.tick();
+      assert.equal(0, timerResult.value);
+      assert.equal(true, timerResult.done);
     });
   });
 });
