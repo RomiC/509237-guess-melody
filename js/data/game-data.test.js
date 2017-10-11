@@ -12,25 +12,25 @@ describe(`Array`, () => {
 describe(`getScore`, () => {
   describe(`getScore`, () => {
     it(`should return -1 when less than 10 answers`, () => {
-      assert.equal(-1, getScore([{time: 0, isCorrect: true}], 3).scoreCount);
+      assert.equal(-1, getScore([{time: 0, isCorrect: true}], 3));
     });
     it(`should return -1 if no answers`, () => {
-      assert.equal(-1, getScore([], 3).scoreCount);
+      assert.equal(-1, getScore([], 3));
     });
     it(`should return 20 when quickly answered 10 questions`, () => {
-      assert.equal(20, getScore(new Array(10).fill({time: 10, isCorrect: true}), 3).scoreCount);
+      assert.equal(20, getScore(new Array(10).fill({time: 10, isCorrect: true}), 3));
     });
     it(`should return 10 when slowly answered 10 questions`, () => {
-      assert.equal(10, getScore(new Array(10).fill({time: 30, isCorrect: true}), 3).scoreCount);
+      assert.equal(10, getScore(new Array(10).fill({time: 30, isCorrect: true}), 3));
     });
     it(`should return 7 when slowly answered 10 questions and notes left = 0`, () => {
-      assert.equal(7, getScore(new Array(10).fill({time: 30, isCorrect: true}), 0).scoreCount);
+      assert.equal(7, getScore(new Array(10).fill({time: 30, isCorrect: true}), 0));
     });
     it(`should return 0 if no correct answers`, () => {
-      assert.equal(0, getScore(new Array(10).fill({time: 30, isCorrect: false}), 3).scoreCount);
+      assert.equal(0, getScore(new Array(10).fill({time: 30, isCorrect: false}), 3));
     });
     it(`should return 0 if no correct answers and notes left = 0`, () => {
-      assert.equal(0, getScore(new Array(10).fill({time: 30, isCorrect: false}), 0).scoreCount);
+      assert.equal(0, getScore(new Array(10).fill({time: 30, isCorrect: false}), 0));
     });
   });
 });

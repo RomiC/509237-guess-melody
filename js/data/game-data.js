@@ -1,11 +1,11 @@
-const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10, timeLeft = 0) => {
+const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 
   let scoreCount = 0;
 
   // Если игрок ответил меньше, чем на 10 вопросов, то игра считается непройденой и функция должна вернуть -1
   if (answersArray.length < totalQuestions) {
     scoreCount = -1;
-    return {scoreCount, notesLeft, timeLeft};
+    return scoreCount;
   }
 
   // Подсчет баллов если все 10 вопросов отвечены
@@ -30,7 +30,7 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10, timeLef
   scoreCount = Math.max(0, scoreCount - (3 - notesLeft));
 
 
-  return {scoreCount, notesLeft, timeLeft};
+  return scoreCount;
 
 };
 
