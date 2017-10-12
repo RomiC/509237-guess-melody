@@ -1,12 +1,6 @@
 import assert from 'assert';
 import {getScore, getResultString, getTimer} from './game-data';
 
-describe(`Array`, () => {
-  it(`should return -1 when the value is not present`, () => {
-    assert.equal(-1, [1, 2, 3].indexOf(4));
-  });
-});
-
 describe(`getScore`, () => {
   it(`should return -1 when less than 10 answers`, () => {
     assert.equal(-1, getScore([{time: 0, isCorrect: true}], 3));
