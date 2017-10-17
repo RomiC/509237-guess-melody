@@ -1,5 +1,11 @@
 const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 
+  // Пример объекта с ответом:
+  // {
+  //   isCorrect: true,
+  //   time: 30
+  // }
+
   let scoreCount = 0;
 
   // Если игрок ответил меньше, чем на 10 вопросов, то игра считается непройденой и функция должна вернуть -1
@@ -35,6 +41,7 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 };
 
 const getResultString = (statistics = [], result) => {
+
   if (result.timeLeft === 0) {
     return `Время вышло! Вы не успели отгадать все мелодии`;
   }
@@ -51,6 +58,7 @@ const getResultString = (statistics = [], result) => {
   const resultPlace = statisticsCount - betterResultsCount;
   const resultPercent = (betterResultsCount / statisticsCount) * 100;
 
+
   return `Вы заняли ${resultPlace}-ое место из ${statisticsCount} игроков. Это лучше чем у ${resultPercent}% игроков`;
 };
 
@@ -66,5 +74,6 @@ const getTimer = (value) => {
     },
   };
 };
+
 
 export {getScore, getResultString, getTimer};
