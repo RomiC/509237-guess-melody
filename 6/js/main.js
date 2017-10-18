@@ -51,7 +51,8 @@ const INIT_NOTES = 3;
 const INIT_TIME = 300;
 
 const initialState = {
-  level: `level-welcome`,
+  screen: `screen-welcome`,
+  question: `question-1`,
   notesLeft: INIT_NOTES,
   timeLeft: INIT_TIME,
   statistics: [],
@@ -78,270 +79,252 @@ const initialState = {
   }
 };
 
-const levelTypes = {
-  LEVEL_WELCOME: `levelWelcome`,
-  LEVEL_ARTIST: `levelArtist`,
-  LEVEL_GENRE: `levelGenre`,
-  LEVEL_RESULT: `levelResult`
+const questionTypes = {
+
+  QUESTION_ARTIST: `levelArtist`,
+  QUESTION_GENRE: `levelGenre`
 };
 
-const levels = {
-  'level-welcome': {
-    type: levelTypes.LEVEL_WELCOME,
-    title: ``,
-    answers: [],
-    destination: `level-1`
+const screenTypes = {
+  SCREEN_WELCOME: `screenWelcome`,
+  SCREEN_GAME: `screenGame`,
+  SCREEN_RESULT: `screenResult`
+};
+
+const screens = {
+  'screen-welcome': {
+    type: screenTypes.SCREEN_WELCOME,
+    destination: `screen-game`
   },
-  'level-1': {
-    type: levelTypes.LEVEL_ARTIST,
+  'screen-game': {
+    type: screenTypes.SCREEN_GAME,
+    destination: `screen-result`
+  },
+  'screen-result': {
+    type: screenTypes.SCREEN_RESULT,
+    destination: `screen-welcome`
+  }
+};
+
+const questions = {
+  'question-1': {
+    type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
-    answers: {
-      'answer-1':
+    answers: [
       {
         isCorrect: true,
         track: musicData[0]
       },
-      'answer-2':
       {
         isCorrect: false,
         track: musicData[1]
       },
-      'answer-3':
       {
         isCorrect: false,
         track: musicData[2]
-      }},
-    destination: `level-2`
+      }
+    ],
+    next: `question-2`
   },
 
-  'level-2': {
-    type: levelTypes.LEVEL_GENRE,
+  'question-2': {
+    type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
-    answers: {
-      'answer-1':
-        {
-          isCorrect: true,
-          track: musicData[0]
-        },
-      'answer-2':
-        {
-          isCorrect: false,
-          track: musicData[1]
-        },
-      'answer-3':
-        {
-          isCorrect: false,
-          track: musicData[2]
-        },
-      'answer-4':
-        {
-          isCorrect: false,
-          track: musicData[3]
-        }},
-    destination: `level-3`
+    answers: [
+      {
+        isCorrect: true,
+        track: musicData[0]
+      },
+      {
+        isCorrect: false,
+        track: musicData[1]
+      },
+      {
+        isCorrect: false,
+        track: musicData[2]
+      },
+      {
+        isCorrect: false,
+        track: musicData[3]
+      }
+    ],
+    next: `question-3`
   },
 
-  'level-3': {
-    type: levelTypes.LEVEL_ARTIST,
+  'question-3': {
+    type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
-    answers: {
-      'answer-1':
-        {
-          isCorrect: true,
-          track: musicData[0]
-        },
-      'answer-2':
-        {
-          isCorrect: false,
-          track: musicData[1]
-        },
-      'answer-3':
-        {
-          isCorrect: false,
-          track: musicData[2]
-        }},
-    destination: `level-4`
+    answers: [
+      {
+        isCorrect: true,
+        track: musicData[0]
+      },
+      {
+        isCorrect: false,
+        track: musicData[1]
+      },
+      {
+        isCorrect: false,
+        track: musicData[2]
+      }
+    ],
+    next: `question-4`
   },
 
-  'level-4': {
-    type: levelTypes.LEVEL_GENRE,
+  'question-4': {
+    type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
-    answers: {
-      'answer-1':
-        {
-          isCorrect: true,
-          track: musicData[0]
-        },
-      'answer-2':
-        {
-          isCorrect: false,
-          track: musicData[1]
-        },
-      'answer-3':
-        {
-          isCorrect: false,
-          track: musicData[2]
-        },
-      'answer-4':
-        {
-          isCorrect: false,
-          track: musicData[3]
-        }},
-    destination: `level-5`
+    answers: [
+      {
+        isCorrect: true,
+        track: musicData[0]
+      },
+      {
+        isCorrect: false,
+        track: musicData[1]
+      },
+      {
+        isCorrect: false,
+        track: musicData[2]
+      },
+      {
+        isCorrect: false,
+        track: musicData[3]
+      }
+    ],
+    next: `question-5`
   },
 
-  'level-5': {
-    type: levelTypes.LEVEL_ARTIST,
+  'question-5': {
+    type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
-    answers: {
-      'answer-1':
-        {
-          isCorrect: true,
-          track: musicData[0]
-        },
-      'answer-2':
-        {
-          isCorrect: false,
-          track: musicData[1]
-        },
-      'answer-3':
-        {
-          isCorrect: false,
-          track: musicData[2]
-        }},
-    destination: `level-6`
+    answers: [
+      {
+        isCorrect: true,
+        track: musicData[0]
+      },
+      {
+        isCorrect: false,
+        track: musicData[1]
+      },
+      {
+        isCorrect: false,
+        track: musicData[2]
+      }
+    ],
+    next: `question-6`
   },
 
-  'level-6': {
-    type: levelTypes.LEVEL_GENRE,
+  'question-6': {
+    type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
-    answers: {
-      'answer-1':
-        {
-          isCorrect: true,
-          track: musicData[0]
-        },
-      'answer-2':
-        {
-          isCorrect: false,
-          track: musicData[1]
-        },
-      'answer-3':
-        {
-          isCorrect: false,
-          track: musicData[2]
-        },
-      'answer-4':
-        {
-          isCorrect: false,
-          track: musicData[3]
-        }},
-    destination: `level-7`
+    answers: [
+      {
+        isCorrect: true,
+        track: musicData[0]
+      },
+      {
+        isCorrect: false,
+        track: musicData[1]
+      },
+      {
+        isCorrect: false,
+        track: musicData[2]
+      },
+      {
+        isCorrect: false,
+        track: musicData[3]
+      }
+    ],
+    next: `question-7`
   },
 
-  'level-7': {
-    type: levelTypes.LEVEL_ARTIST,
+  'question-7': {
+    type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
-    answers: {
-      'answer-1':
-        {
-          isCorrect: true,
-          track: musicData[0]
-        },
-      'answer-2':
-        {
-          isCorrect: false,
-          track: musicData[1]
-        },
-      'answer-3':
-        {
-          isCorrect: false,
-          track: musicData[2]
-        }},
-    destination: `level-8`
+    answers: [
+      {
+        isCorrect: true,
+        track: musicData[0]
+      },
+      {
+        isCorrect: false,
+        track: musicData[1]
+      },
+      {
+        isCorrect: false,
+        track: musicData[2]
+      }
+    ],
+    next: `question-8`
   },
 
-  'level-8': {
-    type: levelTypes.LEVEL_GENRE,
+  'question-8': {
+    type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
-    answers: {
-      'answer-1':
-        {
-          isCorrect: true,
-          track: musicData[0]
-        },
-      'answer-2':
-        {
-          isCorrect: false,
-          track: musicData[1]
-        },
-      'answer-3':
-        {
-          isCorrect: false,
-          track: musicData[2]
-        },
-      'answer-4':
-        {
-          isCorrect: false,
-          track: musicData[3]
-        }},
-    destination: `level-9`
+    answers: [
+      {
+        isCorrect: true,
+        track: musicData[0]
+      },
+      {
+        isCorrect: false,
+        track: musicData[1]
+      },
+      {
+        isCorrect: false,
+        track: musicData[2]
+      },
+      {
+        isCorrect: false,
+        track: musicData[3]
+      }
+    ],
+    next: `question-9`
   },
 
-  'level-9': {
-    type: levelTypes.LEVEL_ARTIST,
+  'question-9': {
+    type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
-    answers: {
-      'answer-1':
-        {
-          isCorrect: true,
-          track: musicData[0]
-        },
-      'answer-2':
-        {
-          isCorrect: false,
-          track: musicData[1]
-        },
-      'answer-3':
-        {
-          isCorrect: false,
-          track: musicData[2]
-        }},
-    destination: `level-10`
+    answers: [
+      {
+        isCorrect: true,
+        track: musicData[0]
+      },
+      {
+        isCorrect: false,
+        track: musicData[1]
+      },
+      {
+        isCorrect: false,
+        track: musicData[2]
+      }
+    ],
+    next: `question-10`
   },
 
-  'level-10': {
-    type: levelTypes.LEVEL_GENRE,
+  'question-10': {
+    type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
-    answers: {
-      'answer-1':
-        {
-          isCorrect: true,
-          track: musicData[0]
-        },
-      'answer-2':
-        {
-          isCorrect: false,
-          track: musicData[1]
-        },
-      'answer-3':
-        {
-          isCorrect: false,
-          track: musicData[2]
-        },
-      'answer-4':
-        {
-          isCorrect: false,
-          track: musicData[3]
-        }},
-    destination: `level-result`
-  },
-
-  'level-result': {
-    type: levelTypes.LEVEL_RESULT,
-    title: ``,
-    answers: [],
-    destination: `level-welcome`
+    answers: [
+      {
+        isCorrect: true,
+        track: musicData[0]
+      },
+      {
+        isCorrect: false,
+        track: musicData[1]
+      },
+      {
+        isCorrect: false,
+        track: musicData[2]
+      },
+      {
+        isCorrect: false,
+        track: musicData[3]
+      }
+    ],
+    next: ``
   },
 };
 
@@ -411,15 +394,15 @@ const getResultString = (statistics = [], result) => {
 
 const logo = `<section class="logo" title="Угадай мелодию"><h1>Угадай мелодию</h1></section>`;
 
-const templateScreenWelcome = `
+const templateScreenWelcome = (state) => `
   <section class="main main--welcome">
     ${logo}
     
     <button class="main-play">Начать игру</button>
     <h2 class="title main-title">Правила игры</h2>
     <p class="text main-text">
-      Правила просты&nbsp;— за&nbsp;5 минут ответить на все вопросы.<br>
-      Ошибиться можно $3 раза.<br>
+      Правила просты — зa ${state.minutesLeft} минут ответить на все вопросы.<br>
+      Ошибиться можно ${state.notesLeft} раза.<br>
       Удачи!
     </p>
   </section>`.trim();
@@ -479,7 +462,7 @@ const playerHandler = (trigger) => {
 
 const artistAnswerWrapper = (id, artist, image) => `
         <div class="main-answer-wrapper">
-          <input class="main-answer-r" type="radio" id="${id}" name="answer" value="val-${id}"/>
+          <input class="main-answer-r" type="radio" id="${id}" name="answer" value="${id}"/>
           <label class="main-answer" for="${id}">
             <img class="main-answer-preview" src="${image}"
                  alt="${artist}" width="134" height="134">
@@ -487,16 +470,21 @@ const artistAnswerWrapper = (id, artist, image) => `
           </label>
         </div>`.trim();
 
-const templateScreenArtist = (level, state) => `
+const templateScreenArtist = (question, state) => `
   <section class="main main--level main--level-artist">
     ${templateHeader(state)}
 
     <div class="main-wrap">
-      <h2 class="title main-title">${level.title}</h2>
-      ${playerWrapper([...Object.entries(level.answers)].filter((answer) => answer[1].isCorrect)[0][0],
-      [...Object.entries(level.answers)].filter((answer) => answer[1].isCorrect)[0][1].track.src)}
+      <h2 class="title main-title">${question.title}</h2>
+
+      ${playerWrapper(0, question.answers.reduce((correctAnswer, currentAnswer) => {
+    correctAnswer = currentAnswer.isCorrect ? currentAnswer : correctAnswer;
+    return correctAnswer;
+  }, {}).track.src)}
+      
       <form class="main-list">
-      ${[...Object.entries(level.answers)].map((answer) => artistAnswerWrapper(answer[0], answer[1].track.artist, answer[1].track.image)).join(``)}
+
+      ${question.answers.map((answer, index) => artistAnswerWrapper(index, answer.track.artist, answer.track.image)).join(``)}
       </form>
     </div>
   </section>`.trim();
@@ -508,14 +496,14 @@ const genreAnswerWrapper = (id, src) => `
           <label class="genre-answer-check" for="${id}"></label>
         </div>`.trim();
 
-const templateScreenGenre = (level, state) => `
+const templateScreenGenre = (question, state) => `
   <section class="main main--level main--level-genre">
     ${templateHeader(state)}
 
     <div class="main-wrap">
-      <h2 class="title">${level.title}</h2>
+      <h2 class="title">${question.title}</h2>
       <form class="genre">
-        ${[...Object.entries(level.answers)].map((answer) => genreAnswerWrapper(answer[0], answer[1].track.src)).join(``)}
+        ${question.answers.map((answer, index) => genreAnswerWrapper(index, answer.track.src)).join(``)}
         <button class="genre-answer-send" type="submit">Ответить</button>
       </form>
     </div>
@@ -555,22 +543,28 @@ const data = {
 
 };
 
-const screenTemplate = (level, state) => {
+const screenTemplate = (screen, question, state) => {
 
-  switch (level.type) {
+  switch (screen.type) {
 
-    case levelTypes.LEVEL_WELCOME:
-      return templateScreenWelcome;
+    case screenTypes.SCREEN_WELCOME:
+      return templateScreenWelcome(state);
 
-    case levelTypes.LEVEL_ARTIST:
+    case screenTypes.SCREEN_GAME:
 
-      return templateScreenArtist(level, state);
+      switch (question.type) {
+        case questionTypes.QUESTION_ARTIST:
+          return templateScreenArtist(question, state);
 
-    case levelTypes.LEVEL_GENRE:
+        case questionTypes.QUESTION_GENRE:
+          return templateScreenGenre(question, state);
 
-      return templateScreenGenre(level, state);
+        default:
+          break;
+      }
+      break;
 
-    case levelTypes.LEVEL_RESULT:
+    case screenTypes.SCREEN_RESULT:
 
       if (!state.notesLeft > 0) {
 
@@ -613,6 +607,8 @@ const screenTemplate = (level, state) => {
       return ``;
   }
 
+  return ``;
+
 };
 
 const getElementFromTemplate = (template) => {
@@ -625,20 +621,21 @@ const app = document.querySelector(`.app`);
 
 const switchAppScreen = (state) => {
 
-  const element = getElementFromTemplate(screenTemplate(levels[state.level], state));
+  const element = getElementFromTemplate(screenTemplate(screens[state.screen], questions[state.question], state));
 
-  switch (levels[state.level].type) {
+  switch (screens[state.screen].type) {
 
-    case levelTypes.LEVEL_WELCOME:
+    case screenTypes.SCREEN_WELCOME:
       const playBtn = element.querySelector(`.main-play`);
 
       const onPlayBtnClick = (e) => {
         e.preventDefault();
 
-        const destination = levels[state.level].destination;
+        const nextScreen = screens[state.screen].destination;
 
         switchAppScreen(Object.assign({}, state, {
-          'level': destination,
+          'screen': nextScreen,
+          'question': initialState.question,
           'notesLeft': initialState.notesLeft,
           'timeLeft': initialState.timeLeft,
           'answers': initialState.answers
@@ -649,111 +646,125 @@ const switchAppScreen = (state) => {
 
       break;
 
-    case levelTypes.LEVEL_ARTIST:
-      const artistAnswersList = element.querySelectorAll(`.main-answer-r`);
+    case screenTypes.SCREEN_GAME:
 
-      [...artistAnswersList].forEach((trigger) => {
-        trigger.addEventListener(`click`, (e) => {
-          e.preventDefault();
-          onAnswerClick(e);
-        });
-      });
+      switch (questions[state.question].type) {
 
-      const onAnswerClick = (e) => {
+        case questionTypes.QUESTION_ARTIST:
 
-        const isCorrect = levels[state.level].answers[e.target.id].isCorrect;
-        const notesLeft = isCorrect ? state.notesLeft : state.notesLeft - 1;
+          const artistAnswersList = element.querySelectorAll(`.main-answer-r`);
 
-        e.preventDefault();
+          [...artistAnswersList].forEach((trigger) => {
+            trigger.addEventListener(`click`, (e) => {
+              e.preventDefault();
+              onAnswerClick(e);
+            });
+          });
 
-        const destination = notesLeft > 0 ? levels[state.level].destination : `level-result`;
+          const onAnswerClick = (e) => {
 
-        switchAppScreen(Object.assign({}, state, {
-          'level': destination,
-          'answers': state.answers.concat({isCorrect, time: 30}),
-          'notesLeft': notesLeft
-        }));
-      };
+            const isCorrect = questions[state.question].answers[e.target.id].isCorrect;
+            const notesLeft = isCorrect ? state.notesLeft : state.notesLeft - 1;
 
-      const artistPlayersList = element.querySelectorAll(`.player`);
-      [...artistPlayersList].forEach((trigger) => {
+            e.preventDefault();
 
-        trigger.addEventListener(`click`, (e) => {
-          e.preventDefault();
-          playerHandler(trigger);
-        });
-      });
+            const nextQuestion = questions[state.question].next;
+            const nextScreen = notesLeft > 0 && nextQuestion ? `screen-game` : screens[state.screen].destination;
+
+            switchAppScreen(Object.assign({}, state, {
+              'screen': nextScreen,
+              'question': nextQuestion,
+              'answers': state.answers.concat({isCorrect, time: 30}),
+              'notesLeft': notesLeft
+            }));
+          };
+
+          const artistPlayersList = element.querySelectorAll(`.player`);
+          [...artistPlayersList].forEach((trigger) => {
+
+            trigger.addEventListener(`click`, (e) => {
+              e.preventDefault();
+              playerHandler(trigger);
+            });
+          });
+
+          break;
+
+        case questionTypes.QUESTION_GENRE:
+
+          const submitAnswerBtn = element.querySelector(`.genre-answer-send`);
+          submitAnswerBtn.disabled = true;
+
+          const answersForm = element.querySelector(`.genre`);
+          const genreAnswersList = [...answersForm.answer];
+
+          const onAnswersFormChange = (e) => {
+            e.preventDefault();
+            submitAnswerBtn.disabled = !genreAnswersList.some((answer) => answer.checked);
+          };
+
+          const onSubmitAnswer = (e) => {
+            e.preventDefault();
+
+            const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
+
+              if (questions[state.question].answers[currentAnswer.id].isCorrect) {
+                result = result && currentAnswer.checked;
+              } else {
+                result = result && !currentAnswer.checked;
+              }
+
+              return result;
+            }, true);
+
+            const notesLeft = isCorrect ? state.notesLeft : state.notesLeft - 1;
+
+            genreAnswersList.forEach((checkbox) => {
+              checkbox.checked = false;
+            });
+            submitAnswerBtn.disabled = true;
+
+            const nextQuestion = questions[state.question].next;
+            const nextScreen = notesLeft > 0 && nextQuestion ? `screen-game` : screens[state.screen].destination;
+
+            switchAppScreen(Object.assign({}, state, {
+              'screen': nextScreen,
+              'question': nextQuestion,
+              'answers': state.answers.concat({isCorrect, time: 30}),
+              'notesLeft': notesLeft
+            }));
+
+          };
+
+          const genrePlayersList = element.querySelectorAll(`.player`);
+          [...genrePlayersList].forEach((trigger) => {
+
+            trigger.addEventListener(`click`, (e) => {
+              e.preventDefault();
+              playerHandler(trigger);
+            });
+          });
+
+          answersForm.addEventListener(`change`, onAnswersFormChange);
+          answersForm.addEventListener(`submit`, onSubmitAnswer);
+
+          break;
+
+      }
 
       break;
 
-    case levelTypes.LEVEL_GENRE:
-
-      const submitAnswerBtn = element.querySelector(`.genre-answer-send`);
-      submitAnswerBtn.disabled = true;
-
-      const answersForm = element.querySelector(`.genre`);
-      const genreAnswersList = [...answersForm.answer];
-
-      const onAnswersFormChange = (e) => {
-        e.preventDefault();
-        submitAnswerBtn.disabled = !genreAnswersList.some((answer) => answer.checked);
-      };
-
-      const onSubmitAnswer = (e) => {
-        e.preventDefault();
-
-        const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
-
-          if (levels[state.level].answers[currentAnswer.id].isCorrect) {
-            result = result && currentAnswer.checked;
-          } else {
-            result = result && !currentAnswer.checked;
-          }
-
-          return result;
-        }, true);
-
-        const notesLeft = isCorrect ? state.notesLeft : state.notesLeft - 1;
-
-        genreAnswersList.forEach((checkbox) => {
-          checkbox.checked = false;
-        });
-        submitAnswerBtn.disabled = true;
-
-        const destination = notesLeft > 0 ? levels[state.level].destination : `level-result`;
-
-        switchAppScreen(Object.assign({}, state, {
-          'level': destination,
-          'answers': state.answers.concat({isCorrect, time: 30}),
-          'notesLeft': notesLeft
-        }));
-
-      };
-
-      const genrePlayersList = element.querySelectorAll(`.player`);
-      [...genrePlayersList].forEach((trigger) => {
-
-        trigger.addEventListener(`click`, (e) => {
-          e.preventDefault();
-          playerHandler(trigger);
-        });
-      });
-
-      answersForm.addEventListener(`change`, onAnswersFormChange);
-      answersForm.addEventListener(`submit`, onSubmitAnswer);
-
-      break;
-
-    case levelTypes.LEVEL_RESULT:
+    case screenTypes.SCREEN_RESULT:
 
       const replayBtn = element.querySelector(`.main-replay`);
 
       const onReplayBtnClick = (e) => {
         e.preventDefault();
-        const destination = levels[state.level].destination;
 
         switchAppScreen(Object.assign({}, state, {
-          'level': destination
+          'screen': initialState.screen,
+          'notesLeft': initialState.notesLeft,
+          'timeLeft': initialState.timeLeft,
         }));
       };
 
