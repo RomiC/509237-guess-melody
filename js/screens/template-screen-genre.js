@@ -8,14 +8,14 @@ const genreAnswerWrapper = (id, src) => `
           <label class="genre-answer-check" for="${id}"></label>
         </div>`.trim();
 
-const templateScreenGenre = (level, state) => `
+const templateScreenGenre = (question, state) => `
   <section class="main main--level main--level-genre">
     ${levelHeader(state)}
 
     <div class="main-wrap">
-      <h2 class="title">${level.title}</h2>
+      <h2 class="title">${question.title}</h2>
       <form class="genre">
-        ${[...Object.entries(level.answers)].map((answer) => genreAnswerWrapper(answer[0], answer[1].track.src)).join(``)}
+        ${question.answers.map((answer, index) => genreAnswerWrapper(index, answer.track.src)).join(``)}
         <button class="genre-answer-send" type="submit">Ответить</button>
       </form>
     </div>

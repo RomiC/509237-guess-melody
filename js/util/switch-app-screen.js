@@ -1,26 +1,27 @@
 import screenTemplate from './get-template-screen';
 import getElementFromTemplate from './get-element-from-template';
-import {initialState, levels, levelTypes} from '../data/levels-data';
+import {initialState, screens, screenTypes, questions, questionTypes} from '../data/state-data';
 import {playerHandler} from '../screens/player';
 
 const app = document.querySelector(`.app`);
 
 const switchAppScreen = (state) => {
 
-  const element = getElementFromTemplate(screenTemplate(levels[state.level], state));
+  const element = getElementFromTemplate(screenTemplate(screens[state.screen], questions[state.question], state));
 
-  switch (levels[state.level].type) {
+  switch (screens[state.screen].type) {
 
-    case levelTypes.LEVEL_WELCOME:
+    case screenTypes.SCREEN_WELCOME:
       const playBtn = element.querySelector(`.main-play`);
 
       const onPlayBtnClick = (e) => {
         e.preventDefault();
 
-        const destination = levels[state.level].destination;
+        const nextScreen = screens[state.screen].destination;
 
         switchAppScreen(Object.assign({}, state, {
-          'level': destination,
+          'screen': nextScreen,
+          'question': initialState.question,
           'notesLeft': initialState.notesLeft,
           'timeLeft': initialState.timeLeft,
           'answers': initialState.answers
@@ -31,111 +32,125 @@ const switchAppScreen = (state) => {
 
       break;
 
-    case levelTypes.LEVEL_ARTIST:
-      const artistAnswersList = element.querySelectorAll(`.main-answer-r`);
+    case screenTypes.SCREEN_GAME:
 
-      [...artistAnswersList].forEach((trigger) => {
-        trigger.addEventListener(`click`, (e) => {
-          e.preventDefault();
-          onAnswerClick(e);
-        });
-      });
+      switch (questions[state.question].type) {
 
-      const onAnswerClick = (e) => {
+        case questionTypes.QUESTION_ARTIST:
 
-        const isCorrect = levels[state.level].answers[e.target.id].isCorrect;
-        const notesLeft = isCorrect ? state.notesLeft : state.notesLeft - 1;
+          const artistAnswersList = element.querySelectorAll(`.main-answer-r`);
 
-        e.preventDefault();
+          [...artistAnswersList].forEach((trigger) => {
+            trigger.addEventListener(`click`, (e) => {
+              e.preventDefault();
+              onAnswerClick(e);
+            });
+          });
 
-        const destination = notesLeft > 0 ? levels[state.level].destination : `level-result`;
+          const onAnswerClick = (e) => {
 
-        switchAppScreen(Object.assign({}, state, {
-          'level': destination,
-          'answers': state.answers.concat({isCorrect, time: 30}),
-          'notesLeft': notesLeft
-        }));
-      };
+            const isCorrect = questions[state.question].answers[e.target.id].isCorrect;
+            const notesLeft = isCorrect ? state.notesLeft : state.notesLeft - 1;
 
-      const artistPlayersList = element.querySelectorAll(`.player`);
-      [...artistPlayersList].forEach((trigger) => {
+            e.preventDefault();
 
-        trigger.addEventListener(`click`, (e) => {
-          e.preventDefault();
-          playerHandler(trigger);
-        });
-      });
+            const nextQuestion = questions[state.question].next;
+            const nextScreen = notesLeft > 0 && nextQuestion ? `screen-game` : screens[state.screen].destination;
+
+            switchAppScreen(Object.assign({}, state, {
+              'screen': nextScreen,
+              'question': nextQuestion,
+              'answers': state.answers.concat({isCorrect, time: 30}),
+              'notesLeft': notesLeft
+            }));
+          };
+
+          const artistPlayersList = element.querySelectorAll(`.player`);
+          [...artistPlayersList].forEach((trigger) => {
+
+            trigger.addEventListener(`click`, (e) => {
+              e.preventDefault();
+              playerHandler(trigger);
+            });
+          });
+
+          break;
+
+        case questionTypes.QUESTION_GENRE:
+
+          const submitAnswerBtn = element.querySelector(`.genre-answer-send`);
+          submitAnswerBtn.disabled = true;
+
+          const answersForm = element.querySelector(`.genre`);
+          const genreAnswersList = [...answersForm.answer];
+
+          const onAnswersFormChange = (e) => {
+            e.preventDefault();
+            submitAnswerBtn.disabled = !genreAnswersList.some((answer) => answer.checked);
+          };
+
+          const onSubmitAnswer = (e) => {
+            e.preventDefault();
+
+            const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
+
+              if (questions[state.question].answers[currentAnswer.id].isCorrect) {
+                result = result && currentAnswer.checked;
+              } else {
+                result = result && !currentAnswer.checked;
+              }
+
+              return result;
+            }, true);
+
+            const notesLeft = isCorrect ? state.notesLeft : state.notesLeft - 1;
+
+            genreAnswersList.forEach((checkbox) => {
+              checkbox.checked = false;
+            });
+            submitAnswerBtn.disabled = true;
+
+            const nextQuestion = questions[state.question].next;
+            const nextScreen = notesLeft > 0 && nextQuestion ? `screen-game` : screens[state.screen].destination;
+
+            switchAppScreen(Object.assign({}, state, {
+              'screen': nextScreen,
+              'question': nextQuestion,
+              'answers': state.answers.concat({isCorrect, time: 30}),
+              'notesLeft': notesLeft
+            }));
+
+          };
+
+          const genrePlayersList = element.querySelectorAll(`.player`);
+          [...genrePlayersList].forEach((trigger) => {
+
+            trigger.addEventListener(`click`, (e) => {
+              e.preventDefault();
+              playerHandler(trigger);
+            });
+          });
+
+          answersForm.addEventListener(`change`, onAnswersFormChange);
+          answersForm.addEventListener(`submit`, onSubmitAnswer);
+
+          break;
+
+      }
 
       break;
 
-    case levelTypes.LEVEL_GENRE:
-
-      const submitAnswerBtn = element.querySelector(`.genre-answer-send`);
-      submitAnswerBtn.disabled = true;
-
-      const answersForm = element.querySelector(`.genre`);
-      const genreAnswersList = [...answersForm.answer];
-
-      const onAnswersFormChange = (e) => {
-        e.preventDefault();
-        submitAnswerBtn.disabled = !genreAnswersList.some((answer) => answer.checked);
-      };
-
-      const onSubmitAnswer = (e) => {
-        e.preventDefault();
-
-        const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
-
-          if (levels[state.level].answers[currentAnswer.id].isCorrect) {
-            result = result && currentAnswer.checked;
-          } else {
-            result = result && !currentAnswer.checked;
-          }
-
-          return result;
-        }, true);
-
-        const notesLeft = isCorrect ? state.notesLeft : state.notesLeft - 1;
-
-        genreAnswersList.forEach((checkbox) => {
-          checkbox.checked = false;
-        });
-        submitAnswerBtn.disabled = true;
-
-        const destination = notesLeft > 0 ? levels[state.level].destination : `level-result`;
-
-        switchAppScreen(Object.assign({}, state, {
-          'level': destination,
-          'answers': state.answers.concat({isCorrect, time: 30}),
-          'notesLeft': notesLeft
-        }));
-
-      };
-
-      const genrePlayersList = element.querySelectorAll(`.player`);
-      [...genrePlayersList].forEach((trigger) => {
-
-        trigger.addEventListener(`click`, (e) => {
-          e.preventDefault();
-          playerHandler(trigger);
-        });
-      });
-
-      answersForm.addEventListener(`change`, onAnswersFormChange);
-      answersForm.addEventListener(`submit`, onSubmitAnswer);
-
-      break;
-
-    case levelTypes.LEVEL_RESULT:
+    case screenTypes.SCREEN_RESULT:
 
       const replayBtn = element.querySelector(`.main-replay`);
 
       const onReplayBtnClick = (e) => {
         e.preventDefault();
-        const destination = levels[state.level].destination;
 
         switchAppScreen(Object.assign({}, state, {
-          'level': destination
+          'screen': initialState.screen,
+          'notesLeft': initialState.notesLeft,
+          'timeLeft': initialState.timeLeft,
         }));
       };
 

@@ -1,4 +1,4 @@
-import {levelTypes, initialState} from '../data/levels-data';
+import {screenTypes, questionTypes, initialState} from '../data/state-data';
 import {getScore, getResultString} from '../data/game-data';
 import templateScreenWelcome from '../screens/template-screen-welcome';
 import templateScreenArtist from '../screens/template-screen-artist';
@@ -7,22 +7,28 @@ import templateScreenResult from '../screens/template-screen-result';
 import data from '../screens/screen-result-data';
 
 
-const screenTemplate = (level, state) => {
+const screenTemplate = (screen, question, state) => {
 
-  switch (level.type) {
+  switch (screen.type) {
 
-    case levelTypes.LEVEL_WELCOME:
-      return templateScreenWelcome;
+    case screenTypes.SCREEN_WELCOME:
+      return templateScreenWelcome(state);
 
-    case levelTypes.LEVEL_ARTIST:
+    case screenTypes.SCREEN_GAME:
 
-      return templateScreenArtist(level, state);
+      switch (question.type) {
+        case questionTypes.QUESTION_ARTIST:
+          return templateScreenArtist(question, state);
 
-    case levelTypes.LEVEL_GENRE:
+        case questionTypes.QUESTION_GENRE:
+          return templateScreenGenre(question, state);
 
-      return templateScreenGenre(level, state);
+        default:
+          break;
+      }
+      break;
 
-    case levelTypes.LEVEL_RESULT:
+    case screenTypes.SCREEN_RESULT:
 
       if (!state.notesLeft > 0) {
 
@@ -64,6 +70,8 @@ const screenTemplate = (level, state) => {
     default:
       return ``;
   }
+
+  return ``;
 
 };
 
