@@ -52,7 +52,7 @@ const INIT_TIME = 300;
 
 const initialState = {
   screen: `screen-welcome`,
-  question: `question-1`,
+  question: 0,
   notesLeft: INIT_NOTES,
   timeLeft: INIT_TIME,
   statistics: [],
@@ -106,8 +106,8 @@ const screens = {
   }
 };
 
-const questions = {
-  'question-1': {
+const questions = [
+  {
     type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
     answers: [
@@ -123,11 +123,9 @@ const questions = {
         isCorrect: false,
         track: musicData[2]
       }
-    ],
-    next: `question-2`
+    ]
   },
-
-  'question-2': {
+  {
     type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
     answers: [
@@ -147,11 +145,9 @@ const questions = {
         isCorrect: false,
         track: musicData[3]
       }
-    ],
-    next: `question-3`
+    ]
   },
-
-  'question-3': {
+  {
     type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
     answers: [
@@ -167,11 +163,9 @@ const questions = {
         isCorrect: false,
         track: musicData[2]
       }
-    ],
-    next: `question-4`
+    ]
   },
-
-  'question-4': {
+  {
     type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
     answers: [
@@ -191,11 +185,9 @@ const questions = {
         isCorrect: false,
         track: musicData[3]
       }
-    ],
-    next: `question-5`
+    ]
   },
-
-  'question-5': {
+  {
     type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
     answers: [
@@ -211,11 +203,9 @@ const questions = {
         isCorrect: false,
         track: musicData[2]
       }
-    ],
-    next: `question-6`
+    ]
   },
-
-  'question-6': {
+  {
     type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
     answers: [
@@ -235,11 +225,9 @@ const questions = {
         isCorrect: false,
         track: musicData[3]
       }
-    ],
-    next: `question-7`
+    ]
   },
-
-  'question-7': {
+  {
     type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
     answers: [
@@ -255,11 +243,9 @@ const questions = {
         isCorrect: false,
         track: musicData[2]
       }
-    ],
-    next: `question-8`
+    ]
   },
-
-  'question-8': {
+  {
     type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
     answers: [
@@ -279,11 +265,9 @@ const questions = {
         isCorrect: false,
         track: musicData[3]
       }
-    ],
-    next: `question-9`
+    ]
   },
-
-  'question-9': {
+  {
     type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
     answers: [
@@ -299,11 +283,9 @@ const questions = {
         isCorrect: false,
         track: musicData[2]
       }
-    ],
-    next: `question-10`
+    ]
   },
-
-  'question-10': {
+  {
     type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
     answers: [
@@ -323,10 +305,9 @@ const questions = {
         isCorrect: false,
         track: musicData[3]
       }
-    ],
-    next: ``
-  },
-};
+    ]
+  }
+];
 
 const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 
@@ -515,29 +496,21 @@ const templateScreenResult = (resultData) => `
     
     <h2 class="title">${resultData.title}</h2>
     <div class="main-stat">${resultData.stat}</div>
-    <span class="main-comparison">${resultData.comparison}</span>
+    <span class="main-comparison">${resultData.comparison ? resultData.comparison : ``}</span>
     <span role="button" tabindex="0" class="main-replay">${resultData.replay}</span>
   </section>`.trim();
 
 const data = {
   win: {
     title: `Вы настоящий меломан!`,
-    // stat: `За&nbsp;3&nbsp;минуты и 25&nbsp;секунд
-    //   <br>вы&nbsp;набрали 12 баллов (8 быстрых)
-    //   <br>совершив 3 ошибки`,
-    // comparison: `Вы заняли 2 место из 10. Это&nbsp;лучше чем у&nbsp;80%&nbsp;игроков`,
     replay: `Сыграть ещё раз`
   },
   attemptsOut: {
     title: `Какая жалость!`,
-    // stat: `У вас закончились все попытки.<br>Ничего, повезёт в следующий раз!`,
-    comparison: ``,
     replay: `Попробовать ещё раз`
   },
   timeOut: {
     title: `Увы и ах!`,
-    // stat: `Время вышло!<br>Вы не успели отгадать все мелодии`,
-    comparison: ``,
     replay: `Попробовать ещё раз`
   },
 
@@ -668,7 +641,7 @@ const switchAppScreen = (state) => {
 
             e.preventDefault();
 
-            const nextQuestion = questions[state.question].next;
+            const nextQuestion = state.question + 1;
             const nextScreen = notesLeft > 0 && nextQuestion ? `screen-game` : screens[state.screen].destination;
 
             switchAppScreen(Object.assign({}, state, {
@@ -724,8 +697,8 @@ const switchAppScreen = (state) => {
             });
             submitAnswerBtn.disabled = true;
 
-            const nextQuestion = questions[state.question].next;
-            const nextScreen = notesLeft > 0 && nextQuestion ? `screen-game` : screens[state.screen].destination;
+            const nextQuestion = state.question + 1;
+            const nextScreen = notesLeft > 0 && questions[nextQuestion] ? `screen-game` : screens[state.screen].destination;
 
             switchAppScreen(Object.assign({}, state, {
               'screen': nextScreen,
