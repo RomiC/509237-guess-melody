@@ -5,7 +5,7 @@ const INIT_TIME = 300;
 
 const initialState = {
   screen: `screen-welcome`,
-  question: `question-1`,
+  question: 0,
   notesLeft: INIT_NOTES,
   timeLeft: INIT_TIME,
   statistics: [],
@@ -59,8 +59,8 @@ const screens = {
   }
 };
 
-const questions = {
-  'question-1': {
+const questions = [
+  {
     type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
     answers: [
@@ -76,11 +76,9 @@ const questions = {
         isCorrect: false,
         track: musicData[2]
       }
-    ],
-    next: `question-2`
+    ]
   },
-
-  'question-2': {
+  {
     type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
     answers: [
@@ -100,11 +98,9 @@ const questions = {
         isCorrect: false,
         track: musicData[3]
       }
-    ],
-    next: `question-3`
+    ]
   },
-
-  'question-3': {
+  {
     type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
     answers: [
@@ -120,11 +116,9 @@ const questions = {
         isCorrect: false,
         track: musicData[2]
       }
-    ],
-    next: `question-4`
+    ]
   },
-
-  'question-4': {
+  {
     type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
     answers: [
@@ -144,11 +138,9 @@ const questions = {
         isCorrect: false,
         track: musicData[3]
       }
-    ],
-    next: `question-5`
+    ]
   },
-
-  'question-5': {
+  {
     type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
     answers: [
@@ -164,11 +156,9 @@ const questions = {
         isCorrect: false,
         track: musicData[2]
       }
-    ],
-    next: `question-6`
+    ]
   },
-
-  'question-6': {
+  {
     type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
     answers: [
@@ -188,11 +178,9 @@ const questions = {
         isCorrect: false,
         track: musicData[3]
       }
-    ],
-    next: `question-7`
+    ]
   },
-
-  'question-7': {
+  {
     type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
     answers: [
@@ -208,11 +196,9 @@ const questions = {
         isCorrect: false,
         track: musicData[2]
       }
-    ],
-    next: `question-8`
+    ]
   },
-
-  'question-8': {
+  {
     type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
     answers: [
@@ -232,11 +218,9 @@ const questions = {
         isCorrect: false,
         track: musicData[3]
       }
-    ],
-    next: `question-9`
+    ]
   },
-
-  'question-9': {
+  {
     type: questionTypes.QUESTION_ARTIST,
     title: `Кто исполняет эту песню?`,
     answers: [
@@ -252,11 +236,9 @@ const questions = {
         isCorrect: false,
         track: musicData[2]
       }
-    ],
-    next: `question-10`
+    ]
   },
-
-  'question-10': {
+  {
     type: questionTypes.QUESTION_GENRE,
     title: `Выберите инди-рок треки`,
     answers: [
@@ -276,10 +258,9 @@ const questions = {
         isCorrect: false,
         track: musicData[3]
       }
-    ],
-    next: ``
-  },
-};
+    ]
+  }
+];
 
 
 export {initialState, screens, screenTypes, questions, questionTypes};

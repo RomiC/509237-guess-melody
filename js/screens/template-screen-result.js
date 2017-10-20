@@ -6,7 +6,7 @@ const templateScreenResult = (resultData) => `
     
     <h2 class="title">${resultData.title}</h2>
     <div class="main-stat">${resultData.stat}</div>
-    <span class="main-comparison">${resultData.comparison}</span>
+    <span class="main-comparison">${resultData.comparison ? resultData.comparison : ``}</span>
     <span role="button" tabindex="0" class="main-replay">${resultData.replay}</span>
   </section>`.trim();
 
