@@ -1,4 +1,5 @@
-import mainWelcome from './modules/screens/mainWelcome';
-import switchAppScreen from './modules/switchAppScreen';
+import switchAppScreen from './util/switch-app-screen';
 
-switchAppScreen(mainWelcome);
+import {initialState} from './data/state-data';
+
+switchAppScreen(initialState);
