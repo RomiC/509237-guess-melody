@@ -55,7 +55,7 @@ const switchAppScreen = (state) => {
             e.preventDefault();
 
             const nextQuestion = state.question + 1;
-            const nextScreen = notesLeft > 0 && nextQuestion ? `screen-game` : screens[state.screen].destination;
+            const nextScreen = notesLeft > 0 && nextQuestion ? `game` : screens[state.screen].destination;
 
             switchAppScreen(Object.assign({}, state, {
               'screen': nextScreen,
@@ -111,7 +111,7 @@ const switchAppScreen = (state) => {
             submitAnswerBtn.disabled = true;
 
             const nextQuestion = state.question + 1;
-            const nextScreen = notesLeft > 0 && questions[nextQuestion] ? `screen-game` : screens[state.screen].destination;
+            const nextScreen = notesLeft > 0 && questions[nextQuestion] ? `game` : screens[state.screen].destination;
 
             switchAppScreen(Object.assign({}, state, {
               'screen': nextScreen,

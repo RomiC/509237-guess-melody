@@ -4,7 +4,7 @@ const INIT_NOTES = 3;
 const INIT_TIME = 300;
 
 const initialState = {
-  screen: `screen-welcome`,
+  screen: `welcome`,
   question: 0,
   notesLeft: INIT_NOTES,
   timeLeft: INIT_TIME,
@@ -45,17 +45,17 @@ const screenTypes = {
 };
 
 const screens = {
-  'screen-welcome': {
+  'welcome': {
     type: screenTypes.SCREEN_WELCOME,
-    destination: `screen-game`
+    destination: `game`
   },
-  'screen-game': {
+  'game': {
     type: screenTypes.SCREEN_GAME,
-    destination: `screen-result`
+    destination: `result`
   },
-  'screen-result': {
+  'result': {
     type: screenTypes.SCREEN_RESULT,
-    destination: `screen-welcome`
+    destination: `welcome`
   }
 };
 
