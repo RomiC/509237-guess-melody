@@ -14,10 +14,14 @@ export default class AbstractView {
 
   }
 
+  getMarkup() {
+    this._element = this.render();
+    this.bind();
+  }
+
   get element() {
     if (!this._element) {
-      this._element = this.render();
-      this.bind();
+      this.getMarkup();
     }
     return this._element;
   }
