@@ -28,10 +28,14 @@ class AbstractView {
 
   }
 
+  getMarkup() {
+    this._element = this.render();
+    this.bind();
+  }
+
   get element() {
     if (!this._element) {
-      this._element = this.render();
-      this.bind();
+      this.getMarkup();
     }
     return this._element;
   }
@@ -393,21 +397,21 @@ const headerTimerValue = (mins, secs) => `
 
 const headerMistakes = (notesLeft) => `
     <div class="main-mistakes">
-    ${new Array(notesLeft).fill(`<img class="main-mistake" src="img/wrong-answer.png" width="35" height="49">`).join(`\n`)}
+    ${new Array(notesLeft).fill(`<img class="main-mistake" src="img/wrong-answer.png" width="35" height="49">`).join(``)}
     </div>`.trim();
 
-const headerSvgCircle = `
+const headerSvgCircle = (state) => `
     <svg xmlns="http://www.w3.org/2000/svg" class="timer" viewBox="0 0 780 780">
       <circle
         cx="390" cy="390" r="370"
         class="timer-line"
         style="filter: url(#blur); transform: rotate(-90deg) scaleY(-1); transform-origin: center"></circle>
 
-      ${headerTimerValue(`05`, `00`)}
+      ${headerTimerValue(state.minutesLeft, state.secondsLeft)}
     </svg>`.trim();
 
 const templateHeader = (state) => `
-    ${headerSvgCircle}
+    ${headerSvgCircle(state)}
     ${headerMistakes(state.notesLeft)}`;
 
 const playerWrapper = (id, src) => `
@@ -422,19 +426,31 @@ const playerWrapper = (id, src) => `
       </div>`.trim();
 
 
-const playerHandler = (trigger) => {
+const playerHandler = (trigger, e, view) => {
 
-  const audio = trigger.querySelector(`audio`);
-  const button = trigger.querySelector(`button`);
-  if (button.classList.contains(`player-control--pause`)) {
-    audio.play();
-    button.classList.remove(`player-control--pause`);
-    button.classList.add(`player-control--play`);
-  } else {
-    button.classList.remove(`player-control--play`);
-    button.classList.add(`player-control--pause`);
-    audio.pause();
-  }
+  const audioAll = view.element.querySelectorAll(`audio`);
+  const audioSelected = e.target.previousElementSibling;
+
+  audioAll.forEach((audio) => {
+
+    const button = audio.nextElementSibling;
+
+    if (audio.id === audioSelected.id) {
+      if (button.classList.contains(`player-control--pause`)) {
+        audio.play();
+        button.classList.remove(`player-control--pause`);
+        button.classList.add(`player-control--play`);
+      } else {
+        button.classList.remove(`player-control--play`);
+        button.classList.add(`player-control--pause`);
+        audio.pause();
+      }
+    } else {
+      audio.pause();
+      button.classList.remove(`player-control--play`);
+      button.classList.add(`player-control--pause`);
+    }
+  });
 };
 
 const artistAnswerWrapper = (id, artist, image) => `
@@ -477,6 +493,10 @@ class GameArtistView extends AbstractView {
   }
 
   bind() {
+
+    this.timeMinsElement = this.element.querySelector(`.timer-value-mins`);
+    this.timeSecsElement = this.element.querySelector(`.timer-value-secs`);
+
     const artistAnswersList = this.element.querySelectorAll(`.main-answer-r`);
 
     [...artistAnswersList].forEach((trigger) => {
@@ -492,10 +512,15 @@ class GameArtistView extends AbstractView {
 
       trigger.onclick = (e) => {
         e.preventDefault();
-        playerHandler(trigger);
+        playerHandler(trigger, e, this);
       };
 
     });
+  }
+
+  updateTime(minutes, seconds) {
+    this.timeMinsElement.textContent = minutes;
+    this.timeSecsElement.textContent = seconds;
   }
 
   onAnswerClick() {
@@ -548,11 +573,11 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 const getResultString = (statistics = [], result) => {
 
   if (result.timeLeft === 0) {
-    return `Время вышло! Вы не успели отгадать все мелодии`;
+    return `Время вышло!<br>Вы не успели отгадать все мелодии`;
   }
 
   if (result.notesLeft === 0) {
-    return `У вас закончились все попытки. Ничего, повезёт в следующий раз!`;
+    return `У вас закончились все попытки.<br>Ничего, повезёт в следующий раз!`;
   }
 
   statistics.push(result.scoreCount);
@@ -567,6 +592,28 @@ const getResultString = (statistics = [], result) => {
   return `Вы заняли ${resultPlace}-ое место из ${statisticsCount} игроков. Это лучше чем у ${resultPercent}% игроков`;
 };
 
+const getQuickAnswersCount = (answersArray) => {
+
+  // Подсчет быстрых ответов
+  return answersArray.reduce((accumulator, currentAnswer) => {
+
+    if (currentAnswer.isCorrect) {
+
+      if (currentAnswer.time <= 30) {
+        accumulator += 1;
+      }
+    }
+
+    return accumulator;
+  }, 0);
+};
+
+const getStatString = (state, initialState, scoreCount) =>
+  `За ${state.minutesSpend} минуты и ${state.secondsSpend} секунд
+   <br>вы набрали ${scoreCount} баллов (${getQuickAnswersCount(state.answers)} быстрых)
+   <br>совершив ${initialState.notesLeft - state.notesLeft} ошибки`.trim();
+
+
 const getTimer = (value) => {
   return {
     value,
@@ -580,23 +627,51 @@ const getTimer = (value) => {
   };
 };
 
+// This is an assign function that copies full descriptors
+function completeAssign(target, ...sources) {
+  sources.forEach((source) => {
+    let descriptors = Object.keys(source).reduce((descriptor, key) => {
+      descriptor[key] = Object.getOwnPropertyDescriptor(source, key);
+      return descriptor;
+    }, {});
+    // by default, Object.assign copies enumerable Symbols too
+    Object.getOwnPropertySymbols(source).forEach((sym) => {
+      let descriptor = Object.getOwnPropertyDescriptor(source, sym);
+      if (descriptor.enumerable) {
+        descriptors[sym] = descriptor;
+      }
+    });
+    Object.defineProperties(target, descriptors);
+  });
+  return target;
+}
+
 const gameArtist = (state) => {
   const gameArtistView = new GameArtistView(state);
+  const startedTime = state.timeLeft;
 
-  let timer = getTimer(state.timeLeft);
+  let timer;
   const startTimer = () => {
-    setTimeout(() => {
+    timer = setTimeout(() => {
+      const newTimerValue = getTimer(state.timeLeft).tick();
+      state.timeLeft = newTimerValue.value;
 
-      // console.log(`tick`);
-      const timeLeft = timer.tick().value;
-      // console.log(timeLeft);
-      state.timeLeft = timeLeft;
-      startTimer();
+      if (!newTimerValue.done) {
+        gameArtistView.updateTime(state.minutesLeft, state.secondsLeft);
+        startTimer();
+      } else {
+        clearTimeout(timer);
+        const newState = completeAssign({}, state, {
+          'screen': `result`
+        });
+        switchAppScreen(changeQuestion$1(newState));
+      }
     }, 1000);
   };
   startTimer();
 
   gameArtistView.onAnswerClick = (e) => {
+    clearTimeout(timer);
 
     const isCorrect = questions[state.question].answers[e.target.id].isCorrect;
     const notesLeft = isCorrect ? state.notesLeft : state.notesLeft - 1;
@@ -604,10 +679,10 @@ const gameArtist = (state) => {
     const nextQuestion = state.question + 1;
     const nextScreen = notesLeft > 0 && nextQuestion ? `game` : screens[state.screen].destination;
 
-    const newState = Object.assign({}, state, {
+    const newState = completeAssign({}, state, {
       'screen': nextScreen,
       'question': nextQuestion,
-      'answers': state.answers.concat({isCorrect, time: 30}),
+      'answers': state.answers.concat({isCorrect, time: startedTime - state.timeLeft}),
       'notesLeft': notesLeft
     });
 
@@ -650,17 +725,24 @@ class GameGenreView extends AbstractView {
 
   bind() {
 
+    this.timeMinsElement = this.element.querySelector(`.timer-value-mins`);
+    this.timeSecsElement = this.element.querySelector(`.timer-value-secs`);
+
     const submitAnswerBtn = this.element.querySelector(`.genre-answer-send`);
     submitAnswerBtn.disabled = true;
 
     const answersForm = this.element.querySelector(`.genre`);
 
     const genrePlayersList = this.element.querySelectorAll(`.player`);
+
+
     [...genrePlayersList].forEach((trigger) => {
 
       trigger.onclick = (e) => {
         e.preventDefault();
-        playerHandler(trigger);
+
+
+        playerHandler(trigger, e, this);
       };
     });
 
@@ -683,6 +765,11 @@ class GameGenreView extends AbstractView {
     submitAnswerBtn.disabled = !genreAnswersList.some((answer) => answer.checked);
   }
 
+  updateTime(minutes, seconds) {
+    this.timeMinsElement.textContent = minutes;
+    this.timeSecsElement.textContent = seconds;
+  }
+
   onSubmitAnswer() {
 
   }
@@ -691,8 +778,31 @@ class GameGenreView extends AbstractView {
 
 const gameGenre = (state) => {
   const gameGenreView = new GameGenreView(state);
+  const startedTime = state.timeLeft;
+
+  let timer;
+  const startTimer = () => {
+    timer = setTimeout(() => {
+      const newTimerValue = getTimer(state.timeLeft).tick();
+      state.timeLeft = newTimerValue.value;
+
+      if (!newTimerValue.done) {
+        gameGenreView.updateTime(state.minutesLeft, state.secondsLeft);
+        startTimer();
+      } else {
+        clearTimeout(timer);
+        const newState = completeAssign({}, state, {
+          'screen': `result`
+        });
+        switchAppScreen(changeQuestion$1(newState));
+      }
+    }, 1000);
+  };
+  startTimer();
 
   gameGenreView.onSubmitAnswer = () => {
+
+    clearTimeout(timer);
 
     const answersForm = gameGenreView.element.querySelector(`.genre`);
     const genreAnswersList = [...answersForm.answer];
@@ -712,10 +822,10 @@ const gameGenre = (state) => {
     const nextQuestion = state.question + 1;
     const nextScreen = notesLeft > 0 && questions[nextQuestion] ? `game` : screens[state.screen].destination;
 
-    const newState = Object.assign({}, state, {
+    const newState = completeAssign({}, state, {
       'screen': nextScreen,
       'question': nextQuestion,
-      'answers': state.answers.concat({isCorrect, time: 30}),
+      'answers': state.answers.concat({isCorrect, time: startedTime - state.timeLeft}),
       'notesLeft': notesLeft
     });
 
@@ -744,42 +854,43 @@ const data = {
 };
 
 class ResultView extends AbstractView {
-  constructor(state) {
+  constructor(state, onReplay) {
     super();
     this.state = state;
+    this.onReplay = onReplay;
 
-    if (!state.notesLeft > 0) {
-
-      const result = {
-        scoreCount: getScore(state.answers, state.notesLeft),
-        notesLeft: state.notesLeft
-      };
-      data.attemptsOut.stat = getResultString(state.statistics, result);
-
-      this.resultData = data.attemptsOut;
-
-    } else if (!state.timeLeft > 0) {
+    if (!state.timeLeft > 0) {
 
       const result = {
         scoreCount: getScore(state.answers, state.notesLeft),
-        notesLeft: state.notesLeft
+        notesLeft: state.notesLeft,
+        timeLeft: state.timeLeft
       };
       data.timeOut.stat = getResultString(state.statistics, result);
 
       this.resultData = data.timeOut;
+
+    } else if (!state.notesLeft > 0) {
+
+      const result = {
+        scoreCount: getScore(state.answers, state.notesLeft),
+        notesLeft: state.notesLeft,
+        timeLeft: state.timeLeft
+      };
+      data.attemptsOut.stat = getResultString(state.statistics, result);
+
+      this.resultData = data.attemptsOut;
 
     } else {
 
       const scoreCount = getScore(state.answers, state.notesLeft);
       const result = {
         scoreCount,
-        notesLeft: state.notesLeft
+        notesLeft: state.notesLeft,
+        timeLeft: state.timeLeft
       };
 
-      data.win.stat = `
-          За ${state.minutesSpend} минуты и ${state.secondsSpend} секунд
-          <br>вы набрали ${scoreCount} баллов (0 быстрых)
-          <br>совершив ${initialState.notesLeft - state.notesLeft} ошибки`.trim();
+      data.win.stat = getStatString(state, initialState, scoreCount);
 
       data.win.comparison = getResultString(state.statistics, result);
       this.resultData = data.win;
@@ -816,11 +927,9 @@ class ResultView extends AbstractView {
 }
 
 const result = (state) => {
-  const welcomeView = new ResultView(state);
 
-  welcomeView.onReplay = () => {
-
-    const newState = Object.assign({}, state, {
+  const onReplay = () => {
+    const newState = completeAssign({}, state, {
       'screen': initialState.screen,
       'notesLeft': initialState.notesLeft,
       'timeLeft': initialState.timeLeft,
@@ -829,7 +938,8 @@ const result = (state) => {
     switchAppScreen(changeQuestion$1(newState));
   };
 
-  return welcomeView;
+  return new ResultView(state, onReplay);
+
 };
 
 var result$1 = (state) => result(state);
@@ -840,7 +950,7 @@ const changeQuestion = (state) => {
 
     case screenTypes.SCREEN_WELCOME:
 
-      return welcome$1(state);
+      return showWelcome(state);
 
     case screenTypes.SCREEN_GAME:
 
@@ -877,7 +987,7 @@ const welcome = (state) => {
 
     const nextScreen = screens[state.screen].destination;
 
-    const nextState = Object.assign({}, state, {
+    const nextState = completeAssign({}, state, {
       'screen': nextScreen,
       'question': initialState.question,
       'notesLeft': initialState.notesLeft,
@@ -890,9 +1000,9 @@ const welcome = (state) => {
   return welcomeView;
 };
 
-var welcome$1 = (state) => welcome(state);
+var showWelcome = (state) => welcome(state);
 
-switchAppScreen(welcome$1(initialState));
+switchAppScreen(showWelcome(initialState));
 
 }());
 
