@@ -7,21 +7,21 @@ const headerTimerValue = (mins, secs) => `
 
 const headerMistakes = (notesLeft) => `
     <div class="main-mistakes">
-    ${new Array(notesLeft).fill(`<img class="main-mistake" src="img/wrong-answer.png" width="35" height="49">`).join(`\n`)}
+    ${new Array(notesLeft).fill(`<img class="main-mistake" src="img/wrong-answer.png" width="35" height="49">`).join(``)}
     </div>`.trim();
 
-const headerSvgCircle = `
+const headerSvgCircle = (state) => `
     <svg xmlns="http://www.w3.org/2000/svg" class="timer" viewBox="0 0 780 780">
       <circle
         cx="390" cy="390" r="370"
         class="timer-line"
         style="filter: url(#blur); transform: rotate(-90deg) scaleY(-1); transform-origin: center"></circle>
 
-      ${headerTimerValue(`05`, `00`)}
+      ${headerTimerValue(state.minutesLeft, state.secondsLeft)}
     </svg>`.trim();
 
 const templateHeader = (state) => `
-    ${headerSvgCircle}
+    ${headerSvgCircle(state)}
     ${headerMistakes(state.notesLeft)}`
 ;
 

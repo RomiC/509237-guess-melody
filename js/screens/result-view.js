@@ -1,47 +1,48 @@
 import AbstractView from '../view';
 import logo from './logo';
 import data from './result-data';
-import {getScore, getResultString} from '../data/game-data';
+import {getScore, getResultString, getStatString} from '../data/game-data';
 import {initialState} from "../data/state-data";
 
 
 class ResultView extends AbstractView {
-  constructor(state) {
+  constructor(state, onReplay) {
     super();
     this.state = state;
+    this.onReplay = onReplay;
 
-    if (!state.notesLeft > 0) {
-
-      const result = {
-        scoreCount: getScore(state.answers, state.notesLeft),
-        notesLeft: state.notesLeft
-      };
-      data.attemptsOut.stat = getResultString(state.statistics, result);
-
-      this.resultData = data.attemptsOut;
-
-    } else if (!state.timeLeft > 0) {
+    if (!state.timeLeft > 0) {
 
       const result = {
         scoreCount: getScore(state.answers, state.notesLeft),
-        notesLeft: state.notesLeft
+        notesLeft: state.notesLeft,
+        timeLeft: state.timeLeft
       };
       data.timeOut.stat = getResultString(state.statistics, result);
 
       this.resultData = data.timeOut;
+
+    } else if (!state.notesLeft > 0) {
+
+      const result = {
+        scoreCount: getScore(state.answers, state.notesLeft),
+        notesLeft: state.notesLeft,
+        timeLeft: state.timeLeft
+      };
+      data.attemptsOut.stat = getResultString(state.statistics, result);
+
+      this.resultData = data.attemptsOut;
 
     } else {
 
       const scoreCount = getScore(state.answers, state.notesLeft);
       const result = {
         scoreCount,
-        notesLeft: state.notesLeft
+        notesLeft: state.notesLeft,
+        timeLeft: state.timeLeft
       };
 
-      data.win.stat = `
-          За ${state.minutesSpend} минуты и ${state.secondsSpend} секунд
-          <br>вы набрали ${scoreCount} баллов (0 быстрых)
-          <br>совершив ${initialState.notesLeft - state.notesLeft} ошибки`.trim();
+      data.win.stat = getStatString(state, initialState, scoreCount);
 
       data.win.comparison = getResultString(state.statistics, result);
       this.resultData = data.win;

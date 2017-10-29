@@ -10,19 +10,31 @@ const playerWrapper = (id, src) => `
       </div>`.trim();
 
 
-const playerHandler = (trigger) => {
+const playerHandler = (trigger, e, view) => {
 
-  const audio = trigger.querySelector(`audio`);
-  const button = trigger.querySelector(`button`);
-  if (button.classList.contains(`player-control--pause`)) {
-    audio.play();
-    button.classList.remove(`player-control--pause`);
-    button.classList.add(`player-control--play`);
-  } else {
-    button.classList.remove(`player-control--play`);
-    button.classList.add(`player-control--pause`);
-    audio.pause();
-  }
+  const audioAll = view.element.querySelectorAll(`audio`);
+  const audioSelected = e.target.previousElementSibling;
+
+  audioAll.forEach((audio) => {
+
+    const button = audio.nextElementSibling;
+
+    if (audio.id === audioSelected.id) {
+      if (button.classList.contains(`player-control--pause`)) {
+        audio.play();
+        button.classList.remove(`player-control--pause`);
+        button.classList.add(`player-control--play`);
+      } else {
+        button.classList.remove(`player-control--play`);
+        button.classList.add(`player-control--pause`);
+        audio.pause();
+      }
+    } else {
+      audio.pause();
+      button.classList.remove(`player-control--play`);
+      button.classList.add(`player-control--pause`);
+    }
+  });
 };
 
 export {playerWrapper, playerHandler};

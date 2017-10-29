@@ -1,7 +1,7 @@
 import {screens, questions, screenTypes, questionTypes} from './data/state-data';
 import gameArtist from "./screens/game-artist";
 import gameGenre from "./screens/game-genre";
-import welcome from './screens/welcome';
+import showWelcome from './screens/welcome';
 import result from './screens/result';
 
 
@@ -11,7 +11,7 @@ const changeQuestion = (state) => {
 
     case screenTypes.SCREEN_WELCOME:
 
-      return welcome(state);
+      return showWelcome(state);
 
     case screenTypes.SCREEN_GAME:
 

@@ -34,17 +34,24 @@ class GameGenreView extends AbstractView {
 
   bind() {
 
+    this.timeMinsElement = this.element.querySelector(`.timer-value-mins`);
+    this.timeSecsElement = this.element.querySelector(`.timer-value-secs`);
+
     const submitAnswerBtn = this.element.querySelector(`.genre-answer-send`);
     submitAnswerBtn.disabled = true;
 
     const answersForm = this.element.querySelector(`.genre`);
 
     const genrePlayersList = this.element.querySelectorAll(`.player`);
+
+
     [...genrePlayersList].forEach((trigger) => {
 
       trigger.onclick = (e) => {
         e.preventDefault();
-        playerHandler(trigger);
+
+
+        playerHandler(trigger, e, this);
       };
     });
 
@@ -65,6 +72,11 @@ class GameGenreView extends AbstractView {
     const answersForm = this.element.querySelector(`.genre`);
     const genreAnswersList = [...answersForm.answer];
     submitAnswerBtn.disabled = !genreAnswersList.some((answer) => answer.checked);
+  }
+
+  updateTime(minutes, seconds) {
+    this.timeMinsElement.textContent = minutes;
+    this.timeSecsElement.textContent = seconds;
   }
 
   onSubmitAnswer() {

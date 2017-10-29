@@ -2,13 +2,13 @@ import switchAppScreen from '../util/switch-app-screen';
 import ResultView from './result-view';
 import changeQuestion from '../game';
 import {initialState} from "../data/state-data";
+import completeAssign from '../util/complete-assign';
+
 
 const result = (state) => {
-  const welcomeView = new ResultView(state);
 
-  welcomeView.onReplay = () => {
-
-    const newState = Object.assign({}, state, {
+  const onReplay = () => {
+    const newState = completeAssign({}, state, {
       'screen': initialState.screen,
       'notesLeft': initialState.notesLeft,
       'timeLeft': initialState.timeLeft,
@@ -17,7 +17,8 @@ const result = (state) => {
     switchAppScreen(changeQuestion(newState));
   };
 
-  return welcomeView;
+  return new ResultView(state, onReplay);
+
 };
 
 export default (state) => result(state);

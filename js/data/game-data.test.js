@@ -27,11 +27,11 @@ describe(`getScore`, () => {
 
 describe(`getResultString`, () => {
   it(`Time Out`, () => {
-    assert.equal(`Время вышло! Вы не успели отгадать все мелодии`,
+    assert.equal(`Время вышло!<br>Вы не успели отгадать все мелодии`,
         getResultString([4, 5, 8, 10, 11], {scoreCount: 0, notesLeft: 3, timeLeft: 0}));
   });
   it(`Attempts Out`, () => {
-    assert.equal(`У вас закончились все попытки. Ничего, повезёт в следующий раз!`,
+    assert.equal(`У вас закончились все попытки.<br>Ничего, повезёт в следующий раз!`,
         getResultString([4, 5, 8, 10, 11], {scoreCount: 0, notesLeft: 0, timeLeft: 30}));
   });
   it(`2-nd place with 5 gamers`, () => {

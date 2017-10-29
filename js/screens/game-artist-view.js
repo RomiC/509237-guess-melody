@@ -43,6 +43,10 @@ class GameArtistView extends AbstractView {
   }
 
   bind() {
+
+    this.timeMinsElement = this.element.querySelector(`.timer-value-mins`);
+    this.timeSecsElement = this.element.querySelector(`.timer-value-secs`);
+
     const artistAnswersList = this.element.querySelectorAll(`.main-answer-r`);
 
     [...artistAnswersList].forEach((trigger) => {
@@ -58,10 +62,15 @@ class GameArtistView extends AbstractView {
 
       trigger.onclick = (e) => {
         e.preventDefault();
-        playerHandler(trigger);
+        playerHandler(trigger, e, this);
       };
 
     });
+  }
+
+  updateTime(minutes, seconds) {
+    this.timeMinsElement.textContent = minutes;
+    this.timeSecsElement.textContent = seconds;
   }
 
   onAnswerClick() {

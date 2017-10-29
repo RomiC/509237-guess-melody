@@ -43,11 +43,11 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 const getResultString = (statistics = [], result) => {
 
   if (result.timeLeft === 0) {
-    return `Время вышло! Вы не успели отгадать все мелодии`;
+    return `Время вышло!<br>Вы не успели отгадать все мелодии`;
   }
 
   if (result.notesLeft === 0) {
-    return `У вас закончились все попытки. Ничего, повезёт в следующий раз!`;
+    return `У вас закончились все попытки.<br>Ничего, повезёт в следующий раз!`;
   }
 
   statistics.push(result.scoreCount);
@@ -61,6 +61,28 @@ const getResultString = (statistics = [], result) => {
 
   return `Вы заняли ${resultPlace}-ое место из ${statisticsCount} игроков. Это лучше чем у ${resultPercent}% игроков`;
 };
+
+const getQuickAnswersCount = (answersArray) => {
+
+  // Подсчет быстрых ответов
+  return answersArray.reduce((accumulator, currentAnswer) => {
+
+    if (currentAnswer.isCorrect) {
+
+      if (currentAnswer.time <= 30) {
+        accumulator += 1;
+      }
+    }
+
+    return accumulator;
+  }, 0);
+};
+
+const getStatString = (state, initialState, scoreCount) =>
+  `За ${state.minutesSpend} минуты и ${state.secondsSpend} секунд
+   <br>вы набрали ${scoreCount} баллов (${getQuickAnswersCount(state.answers)} быстрых)
+   <br>совершив ${initialState.notesLeft - state.notesLeft} ошибки`.trim();
+
 
 const getTimer = (value) => {
   return {
@@ -76,4 +98,4 @@ const getTimer = (value) => {
 };
 
 
-export {getScore, getResultString, getTimer};
+export {getScore, getResultString, getStatString, getTimer};
