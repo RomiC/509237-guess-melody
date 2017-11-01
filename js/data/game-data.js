@@ -1,3 +1,5 @@
+import completeAssign from "../util/complete-assign";
+
 const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 
   // Пример объекта с ответом:
@@ -97,5 +99,14 @@ const getTimer = (value) => {
   };
 };
 
+const tick = (state) => {
+  state = completeAssign({}, state);
 
-export {getScore, getResultString, getStatString, getTimer};
+  const timer = getTimer(state.timeLeft);
+  state.timeLeft = timer.tick().value;
+
+  return state;
+};
+
+
+export {getScore, getResultString, getStatString, getTimer, tick};

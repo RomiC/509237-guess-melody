@@ -1,6 +1,6 @@
 import AbstractView from '../view';
-import levelHeader from './header';
-import {playerWrapper, playerHandler} from './player';
+import levelHeader from '../includes/header';
+import {playerWrapper, playerHandler} from '../includes/player';
 import {questions} from '../data/state-data';
 
 const genreAnswerWrapper = (id, src) => `
@@ -62,7 +62,18 @@ class GameGenreView extends AbstractView {
 
     answersForm.onsubmit = (e) => {
       e.preventDefault();
-      this.onSubmitAnswer();
+      const genreAnswersList = [...answersForm.answer];
+      const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
+
+        if (questions[this.state.question].answers[currentAnswer.id].isCorrect) {
+          result = result && currentAnswer.checked;
+        } else {
+          result = result && !currentAnswer.checked;
+        }
+
+        return result;
+      }, true);
+      this.onAnswer(isCorrect);
     };
 
   }
@@ -79,8 +90,9 @@ class GameGenreView extends AbstractView {
     this.timeSecsElement.textContent = seconds;
   }
 
-  onSubmitAnswer() {
+  static onAnswer(isCorrect) {
 
+    return isCorrect;
   }
 
 }

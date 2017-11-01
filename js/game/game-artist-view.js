@@ -1,6 +1,6 @@
 import AbstractView from '../view';
-import templateHeader from './header';
-import {playerWrapper, playerHandler} from './player';
+import templateHeader from '../includes/header';
+import {playerWrapper, playerHandler} from '../includes/player';
 import {questions} from '../data/state-data';
 
 const artistAnswerWrapper = (id, artist, image) => `
@@ -52,7 +52,8 @@ class GameArtistView extends AbstractView {
     [...artistAnswersList].forEach((trigger) => {
       trigger.onclick = (e) => {
         e.preventDefault();
-        this.onAnswerClick(e);
+        const isCorrect = questions[this.state.question].answers[e.target.id].isCorrect;
+        this.onAnswer(isCorrect);
       };
     });
 
@@ -73,9 +74,11 @@ class GameArtistView extends AbstractView {
     this.timeSecsElement.textContent = seconds;
   }
 
-  onAnswerClick() {
+  static onAnswer(isCorrect) {
 
+    return isCorrect;
   }
+
 }
 
 export default GameArtistView;

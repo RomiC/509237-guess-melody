@@ -1,4 +1,5 @@
 import musicData from './music-data';
+import completeAssign from '../util/complete-assign';
 
 const INIT_NOTES = 3;
 const INIT_TIME = 300;
@@ -30,6 +31,49 @@ const initialState = {
   get secondsSpend() {
     return this.timeSpend - this.minutesSpend * 60;
   }
+};
+
+const getQuestion = (num) => questions[num];
+
+const nextQuestionScreen = (state) => {
+  const currentQuestion = state.question;
+  const currentScreen = state.screen;
+
+  let nextQuestion = currentQuestion;
+  let nextScreen = currentScreen;
+
+  // Пользователь на экране игры - если возможно - поменять вопрос, если нет - поменять экран
+  if ((screens[currentScreen].type === screenTypes.SCREEN_GAME) &&
+    (questions[nextQuestion].type === questionTypes.QUESTION_ARTIST || questions[nextQuestion].type === questionTypes.QUESTION_GENRE)) {
+
+    if (getQuestion(currentQuestion + 1)) {
+
+      nextQuestion = currentQuestion + 1;
+
+    } else {
+      nextScreen = screens[currentScreen].destination;
+    }
+  }
+
+  // Пользователь на экране приветствия или результата - необходимо поменять экран
+  if (screens[currentScreen].type === screenTypes.SCREEN_WELCOME || screens[currentScreen].type === screenTypes.SCREEN_RESULT) {
+    nextScreen = screens[currentScreen].destination;
+  }
+
+  const nextState = completeAssign({}, state);
+  nextState.question = nextQuestion;
+  nextState.screen = nextScreen;
+
+  return nextState;
+};
+
+const setNotes = (state, notes) => {
+  if (notes < 0) {
+    throw new RangeError(`Can't set negative lives`);
+  }
+  state = Object.assign({}, state);
+  state.notesLeft = notes;
+  return state;
 };
 
 const questionTypes = {
@@ -263,4 +307,4 @@ const questions = [
 ];
 
 
-export {initialState, screens, screenTypes, questions, questionTypes};
+export {initialState, screens, screenTypes, questions, questionTypes, getQuestion, nextQuestionScreen, setNotes};

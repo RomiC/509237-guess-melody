@@ -1,15 +1,14 @@
 import AbstractView from '../view';
-import logo from './logo';
+import logo from '../includes/logo';
 import data from './result-data';
 import {getScore, getResultString, getStatString} from '../data/game-data';
 import {initialState} from "../data/state-data";
 
 
 class ResultView extends AbstractView {
-  constructor(state, onReplay) {
+  constructor(state) {
     super();
     this.state = state;
-    this.onReplay = onReplay;
 
     if (!state.timeLeft > 0) {
 
@@ -47,8 +46,6 @@ class ResultView extends AbstractView {
       data.win.comparison = getResultString(state.statistics, result);
       this.resultData = data.win;
     }
-
-
   }
 
   get template() {

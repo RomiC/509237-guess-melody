@@ -1,5 +1,5 @@
 import AbstractView from '../view';
-import logo from './logo';
+import logo from '../includes/logo';
 
 class WelcomeView extends AbstractView {
   constructor(state) {
