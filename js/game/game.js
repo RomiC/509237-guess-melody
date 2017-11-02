@@ -1,25 +1,29 @@
-import {questions, questionTypes, initialState, getQuestion} from '../data/state-data';
+import {questionTypes, initialState, getQuestion} from '../data/state-data';
 import switchAppScreen from '../util/switch-app-screen';
+import timeConverter from '../util/time-converter';
 
 import GameModel from './game-model';
 
+import HeaderView from '../header/header-view';
 import GameArtistView from './game-artist-view';
 import GameGenreView from './game-genre-view';
 
 import App from '../application';
 
 
-const getView = (state) => {
+const getView = (questions, state) => {
+
+  const header = new HeaderView(state);
 
   switch (questions[state.question].type) {
 
     case questionTypes.QUESTION_ARTIST:
 
-      return new GameArtistView(state);
+      return new GameArtistView(header, questions[state.question]);
 
     case questionTypes.QUESTION_GENRE:
 
-      return new GameGenreView(state);
+      return new GameGenreView(header, questions[state.question]);
 
   }
 
@@ -32,14 +36,16 @@ class GameScreen {
 
   init(state = initialState) {
     this.model = new GameModel(state);
-    this.changeQuestion();
+    this.changeQuestion(false);
   }
 
 
-  changeQuestion() {
+  changeQuestion(incrementQuestion = true) {
 
-    this.model.nextQuestionScreen();
-    this.level = getView(this.model.state);
+    if (incrementQuestion) {
+      this.model.nextQuestionScreen();
+    }
+    this.level = getView(this.model.questions, this.model.state);
     const startedTime = this.model.state.timeLeft;
 
     this.level.onAnswer = (isCorrect) => {
@@ -67,7 +73,8 @@ class GameScreen {
 
   tick() {
     this.model.tick();
-    this.level.updateTime(this.model.state.minutesLeft, this.model.state.secondsLeft);
+    const timeInfo = timeConverter(this.model.state.timeLeft);
+    this.level.updateTime(timeInfo.minutesLeft, timeInfo.secondsLeft);
 
     this.timer = setTimeout(() => this.tick(), 1000);
 

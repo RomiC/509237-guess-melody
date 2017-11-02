@@ -1,17 +1,21 @@
-import {initialState, nextQuestionScreen, setNotes} from '../data/state-data';
-import {tick} from '../data/game-data';
+import {questions} from '../data/state-data';
+import {initialState, nextQuestionState, setNotes} from '../data/state-data';
+import {getTimer} from '../data/game-data';
 
 export default class GameModel {
   constructor(state = initialState) {
     this.state = state;
+    this.state.answers = [];
+    this.questions = questions;
   }
 
   nextQuestionScreen() {
-    this.state = nextQuestionScreen(this.state);
+    this.state = nextQuestionState(this.state);
   }
 
   tick() {
-    this.state = tick(this.state);
+    const timer = getTimer(this.state.timeLeft);
+    this.state.timeLeft = timer.tick().value;
   }
 
   canMistake() {
@@ -27,5 +31,4 @@ export default class GameModel {
   pushAnswer(answer) {
     this.state.answers.push(answer);
   }
-
 }

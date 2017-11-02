@@ -8,6 +8,8 @@ class ResultScreen {
   init(state) {
 
     this.state = state;
+    this.state.statistics = [1, 19, 18];
+
     this.view = new ResultView(state);
 
     switchAppScreen(this.view);

@@ -6,12 +6,8 @@ import resultScreen from './result/result';
 
 
 export default class Application {
-  static showWelcome(state = initialState) {
-    state.notesLeft = initialState.notesLeft;
-    state.timeLeft = initialState.timeLeft;
-    // state.answers = initialState.answers;
-    state.answers = [];
-    welcomeScreen.init(state);
+  static showWelcome() {
+    welcomeScreen.init();
   }
 
   static startGame(state = initialState) {

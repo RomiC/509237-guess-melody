@@ -1,7 +1,6 @@
 import AbstractView from '../view';
-import templateHeader from '../includes/header';
 import {playerWrapper, playerHandler} from '../includes/player';
-import {questions} from '../data/state-data';
+
 
 const artistAnswerWrapper = (id, artist, image) => `
         <div class="main-answer-wrapper">
@@ -15,27 +14,28 @@ const artistAnswerWrapper = (id, artist, image) => `
 
 
 class GameArtistView extends AbstractView {
-  constructor(state) {
+  constructor(header, question) {
     super();
-    this.state = state;
+    this.question = question;
+    this.header = header;
   }
 
   get template() {
     return (`
   <section class="main main--level main--level-artist">
-    ${templateHeader(this.state)}
+    ${this.header.template}
 
     <div class="main-wrap">
-      <h2 class="title main-title">${questions[this.state.question].title}</h2>
+      <h2 class="title main-title">${this.question.title}</h2>
 
-      ${playerWrapper(0, questions[this.state.question].answers.reduce((correctAnswer, currentAnswer) => {
+      ${playerWrapper(0, this.question.answers.reduce((correctAnswer, currentAnswer) => {
         correctAnswer = currentAnswer.isCorrect ? currentAnswer : correctAnswer;
         return correctAnswer;
       }, {}).track.src)}
       
       <form class="main-list">
 
-      ${questions[this.state.question].answers.map((answer, index) => artistAnswerWrapper(index, answer.track.artist, answer.track.image)).join(``)}
+      ${this.question.answers.map((answer, index) => artistAnswerWrapper(index, answer.track.artist, answer.track.image)).join(``)}
       </form>
     </div>
   </section>`.trim()
@@ -52,7 +52,7 @@ class GameArtistView extends AbstractView {
     [...artistAnswersList].forEach((trigger) => {
       trigger.onclick = (e) => {
         e.preventDefault();
-        const isCorrect = questions[this.state.question].answers[e.target.id].isCorrect;
+        const isCorrect = this.question.answers[e.target.id].isCorrect;
         this.onAnswer(isCorrect);
       };
     });

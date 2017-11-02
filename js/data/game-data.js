@@ -1,4 +1,4 @@
-import completeAssign from "../util/complete-assign";
+import timeConverter from '../util/time-converter';
 
 const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 
@@ -80,11 +80,13 @@ const getQuickAnswersCount = (answersArray) => {
   }, 0);
 };
 
-const getStatString = (state, initialState, scoreCount) =>
-  `За ${state.minutesSpend} минуты и ${state.secondsSpend} секунд
+const getStatString = (state, initialState, scoreCount) => {
+  const timeInfo = timeConverter(state.timeLeft);
+
+  return `За ${timeInfo.minutesSpend} минуты и ${timeInfo.secondsSpend} секунд
    <br>вы набрали ${scoreCount} баллов (${getQuickAnswersCount(state.answers)} быстрых)
    <br>совершив ${initialState.notesLeft - state.notesLeft} ошибки`.trim();
-
+};
 
 const getTimer = (value) => {
   return {
@@ -99,14 +101,5 @@ const getTimer = (value) => {
   };
 };
 
-const tick = (state) => {
-  state = completeAssign({}, state);
 
-  const timer = getTimer(state.timeLeft);
-  state.timeLeft = timer.tick().value;
-
-  return state;
-};
-
-
-export {getScore, getResultString, getStatString, getTimer, tick};
+export {getScore, getResultString, getStatString, getTimer};
