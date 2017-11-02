@@ -16,15 +16,10 @@ const nextQuestionState = (state) => {
 
   let nextQuestion = currentQuestion;
 
-  // Пользователь на экране игры - если возможно - поменять вопрос
-  if (questions[nextQuestion].type === questionTypes.QUESTION_ARTIST ||
-    questions[nextQuestion].type === questionTypes.QUESTION_GENRE) {
+  if (getQuestion(currentQuestion + 1)) {
 
-    if (getQuestion(currentQuestion + 1)) {
+    nextQuestion = currentQuestion + 1;
 
-      nextQuestion = currentQuestion + 1;
-
-    }
   }
 
   const nextState = Object.assign({}, state);
