@@ -1,4 +1,8 @@
 import timeConverter from '../util/time-converter';
+import {INIT_NOTES} from './state-data';
+
+
+const QUICK_ANSWER_TIME = 30;
 
 const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 
@@ -21,7 +25,7 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 
     if (currentAnswer[0]) {
       // За правильный ответ 1 балл
-      if (currentAnswer[1] >= 30) {
+      if (currentAnswer[1] >= QUICK_ANSWER_TIME) {
         scoreAnswer = 1;
       } else {
         // За быстрый правильный ответ (менее 30 секунд) — 2 балла
@@ -33,7 +37,7 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
   }, 0);
 
   // За каждую соверешнную ошибку вычитается 2 балла, но в 0 уйти нельзя
-  scoreCount = Math.max(0, scoreCount - (3 - notesLeft));
+  scoreCount = Math.max(0, scoreCount - (INIT_NOTES - notesLeft));
 
 
   return scoreCount;
@@ -67,9 +71,9 @@ const getQuickAnswersCount = (answersArray) => {
   // Подсчет быстрых ответов
   return answersArray.reduce((accumulator, currentAnswer) => {
 
-    if (currentAnswer.isCorrect) {
+    if (currentAnswer[0]) {
 
-      if (currentAnswer.time <= 30) {
+      if (currentAnswer[1] <= QUICK_ANSWER_TIME) {
         accumulator += 1;
       }
     }
@@ -100,4 +104,4 @@ const getTimer = (value) => {
 };
 
 
-export {getScore, getResultString, getStatString, getTimer};
+export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, QUICK_ANSWER_TIME};

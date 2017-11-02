@@ -1,5 +1,6 @@
 import assert from 'assert';
-import {getScore, getResultString, getTimer} from './game-data';
+import {getScore, getResultString, getTimer, getQuickAnswersCount, QUICK_ANSWER_TIME} from './game-data';
+
 
 describe(`getScore`, () => {
   it(`should return -1 when less than 10 answers`, () => {
@@ -74,4 +75,14 @@ describe(`getTimer`, () => {
     assert.equal(0, timerResult.value);
     assert.equal(true, timerResult.done);
   });
+});
+
+describe(`getQuickAnswersCount`, () => {
+  it(`should return 0 when 1 incorrect quick answer and  0 correct quick answers`, () => {
+    assert.equal(0, getQuickAnswersCount([[0, QUICK_ANSWER_TIME]], [1, QUICK_ANSWER_TIME - 1]));
+  });
+  it(`should return 1 when 1 correct quick answer`, () => {
+    assert.equal(1, getQuickAnswersCount([[1, QUICK_ANSWER_TIME]], [1, QUICK_ANSWER_TIME - 1]));
+  });
+
 });
