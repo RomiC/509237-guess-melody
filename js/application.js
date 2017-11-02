@@ -5,16 +5,60 @@ import gameScreen from './game/game';
 import resultScreen from './result/result';
 
 
+const ControllerId = {
+  WELCOME: ``,
+  GAME: `game`,
+  RESULT: `result`
+};
+
+const saveState = (state) => {
+  return JSON.stringify(state);
+};
+
+const loadState = (dataString) => {
+  try {
+    return JSON.parse(dataString);
+  } catch (e) {
+    return initialState;
+  }
+};
+
+const routes = {
+  [ControllerId.WELCOME]: welcomeScreen,
+  [ControllerId.GAME]: gameScreen,
+  [ControllerId.RESULT]: resultScreen
+};
+
 export default class Application {
+  static init() {
+    const hashChangeHandler = () => {
+      const hashValue = location.hash.replace(`#`, ``);
+      const [id, data] = hashValue.split(`?`);
+      this.changeHash(id, data);
+    };
+    window.onhashchange = hashChangeHandler;
+    hashChangeHandler();
+  }
+
+  static changeHash(id, data) {
+    const controller = routes[id];
+
+    if (controller) {
+      controller.init(loadState(data));
+    }
+  }
+
   static showWelcome() {
-    welcomeScreen.init();
+    location.hash = ControllerId.WELCOME;
   }
 
   static startGame(state = initialState) {
-    gameScreen.init(state);
+    location.hash = `${ControllerId.GAME}?${saveState(state)}`;
   }
 
   static result(state) {
-    resultScreen.init(state);
+    location.hash = `${ControllerId.RESULT}?${saveState(state)}`;
   }
 }
+
+Application.init();

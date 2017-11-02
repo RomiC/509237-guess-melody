@@ -2,11 +2,9 @@ import timeConverter from '../util/time-converter';
 
 const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 
-  // Пример объекта с ответом:
-  // {
-  //   isCorrect: true,
-  //   time: 30
-  // }
+  // Пример массива с ответом:
+  // [1, 30] = Правильный ответ за 30 секунд
+  // [0, 12] = Неправильный ответ за 12 секунд
 
   let scoreCount = 0;
 
@@ -21,9 +19,9 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
 
     let scoreAnswer = 0;
 
-    if (currentAnswer.isCorrect) {
+    if (currentAnswer[0]) {
       // За правильный ответ 1 балл
-      if (currentAnswer.time >= 30) {
+      if (currentAnswer[1] >= 30) {
         scoreAnswer = 1;
       } else {
         // За быстрый правильный ответ (менее 30 секунд) — 2 балла

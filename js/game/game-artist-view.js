@@ -29,8 +29,7 @@ class GameArtistView extends AbstractView {
       <h2 class="title main-title">${this.question.title}</h2>
 
       ${playerWrapper(0, this.question.answers.reduce((correctAnswer, currentAnswer) => {
-        correctAnswer = currentAnswer.isCorrect ? currentAnswer : correctAnswer;
-        return correctAnswer;
+        return currentAnswer.isCorrect ? currentAnswer : correctAnswer;
       }, {}).track.src)}
       
       <form class="main-list">
