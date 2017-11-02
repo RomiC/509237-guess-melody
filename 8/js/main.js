@@ -47,87 +47,35 @@ var musicData = [
   }
 ];
 
-// This is an assign function that copies full descriptors
-function completeAssign(target, ...sources) {
-  sources.forEach((source) => {
-    let descriptors = Object.keys(source).reduce((descriptor, key) => {
-      descriptor[key] = Object.getOwnPropertyDescriptor(source, key);
-      return descriptor;
-    }, {});
-    // by default, Object.assign copies enumerable Symbols too
-    Object.getOwnPropertySymbols(source).forEach((sym) => {
-      let descriptor = Object.getOwnPropertyDescriptor(source, sym);
-      if (descriptor.enumerable) {
-        descriptors[sym] = descriptor;
-      }
-    });
-    Object.defineProperties(target, descriptors);
-  });
-  return target;
-}
-
 const INIT_NOTES = 3;
 const INIT_TIME = 300;
 
 const initialState = {
-  screen: `welcome`,
   question: 0,
   notesLeft: INIT_NOTES,
   timeLeft: INIT_TIME,
-  statistics: [],
-  answers: [],
-
-  get timeSpend() {
-    return INIT_TIME - this.timeLeft;
-  },
-
-  get minutesLeft() {
-    return Math.floor(this.timeLeft / 60);
-  },
-
-  get secondsLeft() {
-    return this.timeLeft - this.minutesLeft * 60;
-  },
-
-  get minutesSpend() {
-    return Math.floor(this.timeSpend / 60);
-  },
-
-  get secondsSpend() {
-    return this.timeSpend - this.minutesSpend * 60;
-  }
 };
 
 const getQuestion = (num) => questions[num];
 
-const nextQuestionScreen = (state) => {
+const nextQuestionState = (state) => {
   const currentQuestion = state.question;
-  const currentScreen = state.screen;
 
   let nextQuestion = currentQuestion;
-  let nextScreen = currentScreen;
 
-  // Пользователь на экране игры - если возможно - поменять вопрос, если нет - поменять экран
-  if ((screens[currentScreen].type === screenTypes.SCREEN_GAME) &&
-    (questions[nextQuestion].type === questionTypes.QUESTION_ARTIST || questions[nextQuestion].type === questionTypes.QUESTION_GENRE)) {
+  // Пользователь на экране игры - если возможно - поменять вопрос
+  if (questions[nextQuestion].type === questionTypes.QUESTION_ARTIST ||
+    questions[nextQuestion].type === questionTypes.QUESTION_GENRE) {
 
     if (getQuestion(currentQuestion + 1)) {
 
       nextQuestion = currentQuestion + 1;
 
-    } else {
-      nextScreen = screens[currentScreen].destination;
     }
   }
 
-  // Пользователь на экране приветствия или результата - необходимо поменять экран
-  if (screens[currentScreen].type === screenTypes.SCREEN_WELCOME || screens[currentScreen].type === screenTypes.SCREEN_RESULT) {
-    nextScreen = screens[currentScreen].destination;
-  }
-
-  const nextState = completeAssign({}, state);
+  const nextState = Object.assign({}, state);
   nextState.question = nextQuestion;
-  nextState.screen = nextScreen;
 
   return nextState;
 };
@@ -136,7 +84,7 @@ const setNotes = (state, notes) => {
   if (notes < 0) {
     throw new RangeError(`Can't set negative lives`);
   }
-  state = completeAssign({}, state);
+  state = Object.assign({}, state);
   state.notesLeft = notes;
   return state;
 };
@@ -145,27 +93,6 @@ const questionTypes = {
 
   QUESTION_ARTIST: `levelArtist`,
   QUESTION_GENRE: `levelGenre`
-};
-
-const screenTypes = {
-  SCREEN_WELCOME: `screenWelcome`,
-  SCREEN_GAME: `screenGame`,
-  SCREEN_RESULT: `screenResult`
-};
-
-const screens = {
-  'welcome': {
-    type: screenTypes.SCREEN_WELCOME,
-    destination: `game`
-  },
-  'game': {
-    type: screenTypes.SCREEN_GAME,
-    destination: `result`
-  },
-  'result': {
-    type: screenTypes.SCREEN_RESULT,
-    destination: `welcome`
-  }
 };
 
 const questions = [
@@ -414,6 +341,17 @@ class AbstractView {
 
 const logo = `<section class="logo" title="Угадай мелодию"><h1>Угадай мелодию</h1></section>`;
 
+const timeConverter = (timeLeft, initTime = initialState.timeLeft) => {
+  const timeSpend = initTime - timeLeft;
+  const minutesLeft = Math.floor(timeLeft / 60);
+  const secondsLeft = timeLeft - minutesLeft * 60;
+  const minutesSpend = Math.floor(timeSpend / 60);
+  const secondsSpend = timeSpend - minutesSpend * 60;
+
+  return {timeSpend, minutesLeft, secondsLeft, minutesSpend, secondsSpend};
+
+};
+
 class WelcomeView extends AbstractView {
   constructor(state) {
     super();
@@ -421,6 +359,8 @@ class WelcomeView extends AbstractView {
   }
 
   get template() {
+    const timeInfo = timeConverter(this.state.timeLeft);
+
     return (`
   <section class="main main--welcome">
     ${logo}
@@ -428,7 +368,7 @@ class WelcomeView extends AbstractView {
     <button class="main-play">Начать игру</button>
     <h2 class="title main-title">Правила игры</h2>
     <p class="text main-text">
-      Правила просты — зa ${this.state.minutesLeft} минут ответить на все вопросы.<br>
+      Правила просты — зa ${timeInfo.minutesLeft} минут ответить на все вопросы.<br>
       Ошибиться можно ${this.state.notesLeft} раза.<br>
       Удачи!
     </p>
@@ -452,10 +392,11 @@ class WelcomeView extends AbstractView {
 
 class WelcomeScreen {
 
-  init(state) {
-
-    this.state = state;
-    this.view = new WelcomeView(state);
+  init() {
+    this.state = {};
+    this.state.notesLeft = INIT_NOTES;
+    this.state.timeLeft = INIT_TIME;
+    this.view = new WelcomeView(this.state);
 
     switchAppScreen(this.view);
 
@@ -548,11 +489,13 @@ const getQuickAnswersCount = (answersArray) => {
   }, 0);
 };
 
-const getStatString = (state, initialState, scoreCount) =>
-  `За ${state.minutesSpend} минуты и ${state.secondsSpend} секунд
+const getStatString = (state, initialState, scoreCount) => {
+  const timeInfo = timeConverter(state.timeLeft);
+
+  return `За ${timeInfo.minutesSpend} минуты и ${timeInfo.secondsSpend} секунд
    <br>вы набрали ${scoreCount} баллов (${getQuickAnswersCount(state.answers)} быстрых)
    <br>совершив ${initialState.notesLeft - state.notesLeft} ошибки`.trim();
-
+};
 
 const getTimer = (value) => {
   return {
@@ -567,26 +510,20 @@ const getTimer = (value) => {
   };
 };
 
-const tick = (state) => {
-  state = completeAssign({}, state);
-
-  const timer = getTimer(state.timeLeft);
-  state.timeLeft = timer.tick().value;
-
-  return state;
-};
-
 class GameModel {
   constructor(state = initialState) {
     this.state = state;
+    this.state.answers = [];
+    this.questions = questions;
   }
 
   nextQuestionScreen() {
-    this.state = nextQuestionScreen(this.state);
+    this.state = nextQuestionState(this.state);
   }
 
   tick() {
-    this.state = tick(this.state);
+    const timer = getTimer(this.state.timeLeft);
+    this.state.timeLeft = timer.tick().value;
   }
 
   canMistake() {
@@ -602,7 +539,6 @@ class GameModel {
   pushAnswer(answer) {
     this.state.answers.push(answer);
   }
-
 }
 
 const headerTimerValue = (mins, secs) => `
@@ -627,15 +563,24 @@ const headerSvgCircle = (state) => `
       ${headerTimerValue(state.minutesLeft, state.secondsLeft)}
     </svg>`.trim();
 
-const templateHeader = (state) => `
-    ${headerSvgCircle(state)}
-    ${headerMistakes(state.notesLeft)}`;
+class HeaderView extends AbstractView {
+  constructor(state = {notesLeft: 0, minutesLeft: 0, secondsLeft: 0}) {
+    super();
+    this.state = state;
+  }
+
+  get template() {
+    return `
+    ${headerSvgCircle(this.state)}
+    ${headerMistakes(this.state.notesLeft)}`.trim();
+  }
+}
 
 const playerWrapper = (id, src) => `
       <div class="player-wrapper">
         <div class="player">
           <audio src="${src}" id="audio-${id}"></audio>
-          <button class="player-control player-control--pause"></button>
+          <button class="player-control player-control--play"></button>
           <div class="player-track">
             <span class="player-status"></span>
           </div>
@@ -653,19 +598,19 @@ const playerHandler = (trigger, e, view) => {
     const button = audio.nextElementSibling;
 
     if (audio.id === audioSelected.id) {
-      if (button.classList.contains(`player-control--pause`)) {
+      if (button.classList.contains(`player-control--play`)) {
         audio.play();
-        button.classList.remove(`player-control--pause`);
-        button.classList.add(`player-control--play`);
-      } else {
         button.classList.remove(`player-control--play`);
         button.classList.add(`player-control--pause`);
+      } else {
+        button.classList.remove(`player-control--pause`);
+        button.classList.add(`player-control--play`);
         audio.pause();
       }
     } else {
       audio.pause();
-      button.classList.remove(`player-control--play`);
-      button.classList.add(`player-control--pause`);
+      button.classList.remove(`player-control--pause`);
+      button.classList.add(`player-control--play`);
     }
   });
 };
@@ -682,27 +627,28 @@ const artistAnswerWrapper = (id, artist, image) => `
 
 
 class GameArtistView extends AbstractView {
-  constructor(state) {
+  constructor(header, question) {
     super();
-    this.state = state;
+    this.question = question;
+    this.header = header;
   }
 
   get template() {
     return (`
   <section class="main main--level main--level-artist">
-    ${templateHeader(this.state)}
+    ${this.header.template}
 
     <div class="main-wrap">
-      <h2 class="title main-title">${questions[this.state.question].title}</h2>
+      <h2 class="title main-title">${this.question.title}</h2>
 
-      ${playerWrapper(0, questions[this.state.question].answers.reduce((correctAnswer, currentAnswer) => {
+      ${playerWrapper(0, this.question.answers.reduce((correctAnswer, currentAnswer) => {
         correctAnswer = currentAnswer.isCorrect ? currentAnswer : correctAnswer;
         return correctAnswer;
       }, {}).track.src)}
       
       <form class="main-list">
 
-      ${questions[this.state.question].answers.map((answer, index) => artistAnswerWrapper(index, answer.track.artist, answer.track.image)).join(``)}
+      ${this.question.answers.map((answer, index) => artistAnswerWrapper(index, answer.track.artist, answer.track.image)).join(``)}
       </form>
     </div>
   </section>`.trim()
@@ -719,7 +665,7 @@ class GameArtistView extends AbstractView {
     [...artistAnswersList].forEach((trigger) => {
       trigger.onclick = (e) => {
         e.preventDefault();
-        const isCorrect = questions[this.state.question].answers[e.target.id].isCorrect;
+        const isCorrect = this.question.answers[e.target.id].isCorrect;
         this.onAnswer(isCorrect);
       };
     });
@@ -756,20 +702,21 @@ const genreAnswerWrapper = (id, src) => `
         </div>`.trim();
 
 class GameGenreView extends AbstractView {
-  constructor(state) {
+  constructor(header, question) {
     super();
-    this.state = state;
+    this.question = question;
+    this.header = header;
   }
 
   get template() {
     return (`
   <section class="main main--level main--level-genre">
-    ${templateHeader(this.state)}
+    ${this.header.template}
 
     <div class="main-wrap">
-      <h2 class="title">${questions[this.state.question].title}</h2>
+      <h2 class="title">${this.question.title}</h2>
       <form class="genre">
-        ${questions[this.state.question].answers.map((answer, index) => genreAnswerWrapper(index, answer.track.src)).join(``)}
+        ${this.question.answers.map((answer, index) => genreAnswerWrapper(index, answer.track.src)).join(``)}
         <button class="genre-answer-send" type="submit">Ответить</button>
       </form>
     </div>
@@ -810,7 +757,7 @@ class GameGenreView extends AbstractView {
       const genreAnswersList = [...answersForm.answer];
       const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
 
-        if (questions[this.state.question].answers[currentAnswer.id].isCorrect) {
+        if (this.question.answers[currentAnswer.id].isCorrect) {
           result = result && currentAnswer.checked;
         } else {
           result = result && !currentAnswer.checked;
@@ -842,21 +789,23 @@ class GameGenreView extends AbstractView {
 
 }
 
-const getView = (state) => {
+const getView = (questions$$1, state) => {
 
-  switch (questions[state.question].type) {
+  const header = new HeaderView(state);
+
+  switch (questions$$1[state.question].type) {
 
     case questionTypes.QUESTION_ARTIST:
 
-      return new GameArtistView(state);
+      return new GameArtistView(header, questions$$1[state.question]);
 
     case questionTypes.QUESTION_GENRE:
 
-      return new GameGenreView(state);
+      return new GameGenreView(header, questions$$1[state.question]);
 
   }
 
-  throw new Error(`Unknown question type ${questions[state.question].type}`);
+  throw new Error(`Unknown question type ${questions$$1[state.question].type}`);
 
 };
 
@@ -865,14 +814,16 @@ class GameScreen {
 
   init(state = initialState) {
     this.model = new GameModel(state);
-    this.changeQuestion();
+    this.changeQuestion(false);
   }
 
 
-  changeQuestion() {
+  changeQuestion(incrementQuestion = true) {
 
-    this.model.nextQuestionScreen();
-    this.level = getView(this.model.state);
+    if (incrementQuestion) {
+      this.model.nextQuestionScreen();
+    }
+    this.level = getView(this.model.questions, this.model.state);
     const startedTime = this.model.state.timeLeft;
 
     this.level.onAnswer = (isCorrect) => {
@@ -900,7 +851,8 @@ class GameScreen {
 
   tick() {
     this.model.tick();
-    this.level.updateTime(this.model.state.minutesLeft, this.model.state.secondsLeft);
+    const timeInfo = timeConverter(this.model.state.timeLeft);
+    this.level.updateTime(timeInfo.minutesLeft, timeInfo.secondsLeft);
 
     this.timer = setTimeout(() => this.tick(), 1000);
 
@@ -1009,6 +961,8 @@ class ResultScreen {
   init(state) {
 
     this.state = state;
+    this.state.statistics = [1, 19, 18];
+
     this.view = new ResultView(state);
 
     switchAppScreen(this.view);
@@ -1022,12 +976,8 @@ class ResultScreen {
 var resultScreen = new ResultScreen();
 
 class Application {
-  static showWelcome(state = initialState) {
-    state.notesLeft = initialState.notesLeft;
-    state.timeLeft = initialState.timeLeft;
-    // state.answers = initialState.answers;
-    state.answers = [];
-    welcomeScreen.init(state);
+  static showWelcome() {
+    welcomeScreen.init();
   }
 
   static startGame(state = initialState) {
