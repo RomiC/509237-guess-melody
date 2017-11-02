@@ -1,3 +1,6 @@
+import AbstractView from '../view';
+
+
 const headerTimerValue = (mins, secs) => `
       <div class="timer-value" xmlns="http://www.w3.org/1999/xhtml">
         <span class="timer-value-mins">${mins}</span><!--
@@ -20,9 +23,15 @@ const headerSvgCircle = (state) => `
       ${headerTimerValue(state.minutesLeft, state.secondsLeft)}
     </svg>`.trim();
 
-const templateHeader = (state) => `
-    ${headerSvgCircle(state)}
-    ${headerMistakes(state.notesLeft)}`
-;
+export default class HeaderView extends AbstractView {
+  constructor(state = {notesLeft: 0, minutesLeft: 0, secondsLeft: 0}) {
+    super();
+    this.state = state;
+  }
 
-export default templateHeader;
+  get template() {
+    return `
+    ${headerSvgCircle(this.state)}
+    ${headerMistakes(this.state.notesLeft)}`.trim();
+  }
+}

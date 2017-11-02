@@ -1,7 +1,6 @@
 import AbstractView from '../view';
-import levelHeader from './header';
-import {playerWrapper, playerHandler} from './player';
-import {questions} from '../data/state-data';
+import {playerWrapper, playerHandler} from '../includes/player';
+
 
 const genreAnswerWrapper = (id, src) => `
         <div class="genre-answer">
@@ -11,20 +10,21 @@ const genreAnswerWrapper = (id, src) => `
         </div>`.trim();
 
 class GameGenreView extends AbstractView {
-  constructor(state) {
+  constructor(header, question) {
     super();
-    this.state = state;
+    this.question = question;
+    this.header = header;
   }
 
   get template() {
     return (`
   <section class="main main--level main--level-genre">
-    ${levelHeader(this.state)}
+    ${this.header.template}
 
     <div class="main-wrap">
-      <h2 class="title">${questions[this.state.question].title}</h2>
+      <h2 class="title">${this.question.title}</h2>
       <form class="genre">
-        ${questions[this.state.question].answers.map((answer, index) => genreAnswerWrapper(index, answer.track.src)).join(``)}
+        ${this.question.answers.map((answer, index) => genreAnswerWrapper(index, answer.track.src)).join(``)}
         <button class="genre-answer-send" type="submit">Ответить</button>
       </form>
     </div>
@@ -62,7 +62,18 @@ class GameGenreView extends AbstractView {
 
     answersForm.onsubmit = (e) => {
       e.preventDefault();
-      this.onSubmitAnswer();
+      const genreAnswersList = [...answersForm.answer];
+      const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
+
+        if (this.question.answers[currentAnswer.id].isCorrect) {
+          result = result && currentAnswer.checked;
+        } else {
+          result = result && !currentAnswer.checked;
+        }
+
+        return result;
+      }, true);
+      this.onAnswer(isCorrect);
     };
 
   }
@@ -79,8 +90,9 @@ class GameGenreView extends AbstractView {
     this.timeSecsElement.textContent = seconds;
   }
 
-  onSubmitAnswer() {
+  static onAnswer(isCorrect) {
 
+    return isCorrect;
   }
 
 }
