@@ -136,7 +136,7 @@ const setNotes = (state, notes) => {
   if (notes < 0) {
     throw new RangeError(`Can't set negative lives`);
   }
-  state = Object.assign({}, state);
+  state = completeAssign({}, state);
   state.notesLeft = notes;
   return state;
 };
