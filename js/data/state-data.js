@@ -9,34 +9,6 @@ const initialState = {
   timeLeft: INIT_TIME,
 };
 
-const getQuestion = (num) => questions[num];
-
-const nextQuestionState = (state) => {
-  const currentQuestion = state.question;
-
-  let nextQuestion = currentQuestion;
-
-  if (getQuestion(currentQuestion + 1)) {
-
-    nextQuestion = currentQuestion + 1;
-
-  }
-
-  const nextState = Object.assign({}, state);
-  nextState.question = nextQuestion;
-
-  return nextState;
-};
-
-const setNotes = (state, notes) => {
-  if (notes < 0) {
-    throw new RangeError(`Can't set negative lives`);
-  }
-  state = Object.assign({}, state);
-  state.notesLeft = notes;
-  return state;
-};
-
 const questionTypes = {
 
   QUESTION_ARTIST: `levelArtist`,
@@ -247,4 +219,4 @@ const questions = [
 ];
 
 
-export {initialState, INIT_NOTES, INIT_TIME, questions, questionTypes, getQuestion, nextQuestionState, setNotes};
+export {initialState, INIT_NOTES, INIT_TIME, questions, questionTypes};

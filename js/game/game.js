@@ -1,4 +1,4 @@
-import {questionTypes, initialState, getQuestion} from '../data/state-data';
+import {questionTypes, initialState} from '../data/state-data';
 import switchAppScreen from '../util/switch-app-screen';
 import timeConverter from '../util/time-converter';
 
@@ -58,7 +58,7 @@ class GameScreen {
       this.model.pushAnswer({isCorrect, time: startedTime - this.model.state.timeLeft});
 
       // Если попытки кончились или вопросов больше нет - переход на экран результата
-      if (this.model.state.notesLeft <= 0 || !getQuestion(this.model.state.question + 1)) {
+      if (this.model.state.notesLeft <= 0 || !this.model.nextQuestionAvailable()) {
         App.result(this.model.state);
       } else {
         switchAppScreen(this.level);
