@@ -1,2 +1,3 @@
-import './application';
+import App from './application';
 
+App.showSplash();
