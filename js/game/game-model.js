@@ -1,47 +1,30 @@
-import {getTimer} from '../data/game-data';
-import {resultTypes} from '../data/game-data';
+import {getTimer, incrementQuestion, setNotes, getQuestion} from './game-data';
+import {ResultTypes} from './game-data';
 
-const getQuestion = (questions, num) => questions[num];
 
-const nextQuestionState = (state, questions) => {
-  const currentQuestion = state.question;
-
-  let nextQuestion = currentQuestion;
-
-  if (getQuestion(questions, currentQuestion + 1)) {
-
-    nextQuestion = currentQuestion + 1;
-
-  }
-
-  const nextState = Object.assign({}, state);
-  nextState.question = nextQuestion;
-
-  return nextState;
-};
-
-const setNotes = (state, notes) => {
-  if (notes < 0) {
-    throw new RangeError(`Can't set negative lives`);
-  }
-  state = Object.assign({}, state);
-  state.notesLeft = notes;
-  return state;
-};
-
-export default class GameModel {
+class GameModel {
   constructor(questions) {
     this.state = {};
     this.state.answers = [];
     this.questions = questions;
   }
 
-  update(newState) {
+  updateState(newState) {
     return Object.assign(this.state, newState);
   }
 
-  nextQuestionScreen() {
-    this.state = nextQuestionState(this.state, this.questions);
+  cleanState(resultWin = false) {
+    const {notesLeft, timeLeft, answers} = this.state;
+
+    if (resultWin) {
+      this.state = {notesLeft, timeLeft, answers, result: ResultTypes.WIN};
+    } else {
+      this.state = {notesLeft, timeLeft, answers, result: ResultTypes.LOOSE};
+    }
+  }
+
+  incrementQuestionInState() {
+    this.state = incrementQuestion(this.state, this.questions);
   }
 
   tick() {
@@ -66,14 +49,7 @@ export default class GameModel {
   nextQuestionAvailable() {
     return !!getQuestion(this.questions, this.state.question + 1);
   }
-
-  cleanState(resultWin = false) {
-    const {notesLeft, timeLeft, answers} = this.state;
-
-    if (resultWin) {
-      this.state = {notesLeft, timeLeft, answers, result: resultTypes.WIN};
-    } else {
-      this.state = {notesLeft, timeLeft, answers, result: resultTypes.LOOSE};
-    }
-  }
 }
+
+
+export default GameModel;

@@ -1,6 +1,6 @@
-import {initialState} from '../data/state-data';
+import {InitialState} from '../data/state-data';
 import switchAppScreen from '../util/switch-app-screen';
-import timeConverter from '../util/time-converter';
+import convertTime from '../util/convert-time';
 
 import GameModel from './game-model';
 
@@ -10,25 +10,27 @@ import GameGenreView from './game-genre-view';
 
 import App from '../application';
 
-import {questionTypes} from '../data/game-data';
+import {QuestionTypes} from './game-data';
 
 const getView = (questions, state) => {
 
   const header = new HeaderView(state);
+  const question = questions[state.question];
+  const questionType = question.type;
 
-  switch (questions[state.question].type) {
+  switch (questionType) {
 
-    case questionTypes.QUESTION_ARTIST:
+    case QuestionTypes.QUESTION_ARTIST:
 
-      return new GameArtistView(header, questions[state.question]);
+      return new GameArtistView(header, question);
 
-    case questionTypes.QUESTION_GENRE:
+    case QuestionTypes.QUESTION_GENRE:
 
-      return new GameGenreView(header, questions[state.question]);
+      return new GameGenreView(header, question);
 
   }
 
-  throw new Error(`Unknown question type ${questions[state.question].type}`);
+  throw new Error(`Unknown question type ${questionType}`);
 
 };
 
@@ -40,16 +42,15 @@ export default class GameScreen {
     this.model.questions = questions;
   }
 
-  init(state = initialState) {
-    this.model.update(state);
+  init(state = InitialState) {
+    this.model.updateState(state);
     this.changeQuestion(false);
   }
-
 
   changeQuestion(incrementQuestion = true) {
 
     if (incrementQuestion) {
-      this.model.nextQuestionScreen();
+      this.model.incrementQuestionInState();
     }
     this.level = getView(this.model.questions, this.model.state);
     const startedTime = this.model.state.timeLeft;
@@ -67,11 +68,11 @@ export default class GameScreen {
       // Если попытки кончились - переход на экран результата без статуса выйгрыша
       if (this.model.state.notesLeft <= 0) {
         this.model.cleanState(false);
-        App.result(this.model.state);
+        App.showResult(this.model.state);
         // Если вопросов больше нет - переход на экран результата со статусом выйгрыша
       } else if (!this.model.nextQuestionAvailable()) {
         this.model.cleanState(true);
-        App.result(this.model.state);
+        App.showResult(this.model.state);
       } else {
         switchAppScreen(this.level);
         this.changeQuestion();
@@ -85,7 +86,7 @@ export default class GameScreen {
 
   tick() {
     this.model.tick();
-    const timeInfo = timeConverter(this.model.state.timeLeft);
+    const timeInfo = convertTime(this.model.state.timeLeft);
     this.level.updateTime(timeInfo.minutesLeft, timeInfo.secondsLeft);
 
     this.timer = setTimeout(() => this.tick(), 1000);
@@ -94,7 +95,7 @@ export default class GameScreen {
     if (this.model.state.timeLeft <= 0) {
       this.stopTimer();
       this.model.cleanState(false);
-      App.result(this.model.state);
+      App.showResult(this.model.state);
     }
   }
 

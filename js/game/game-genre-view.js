@@ -37,32 +37,28 @@ class GameGenreView extends AbstractView {
     this.timeMinsElement = this.element.querySelector(`.timer-value-mins`);
     this.timeSecsElement = this.element.querySelector(`.timer-value-secs`);
 
-    const submitAnswerBtn = this.element.querySelector(`.genre-answer-send`);
-    submitAnswerBtn.disabled = true;
+    const submitAnswerBtnElement = this.element.querySelector(`.genre-answer-send`);
+    submitAnswerBtnElement.disabled = true;
 
-    const answersForm = this.element.querySelector(`.genre`);
+    const answersFormElement = this.element.querySelector(`.genre`);
+    const genrePlayersListElement = this.element.querySelectorAll(`.player`);
 
-    const genrePlayersList = this.element.querySelectorAll(`.player`);
-
-
-    [...genrePlayersList].forEach((trigger) => {
+    [...genrePlayersListElement].forEach((trigger) => {
 
       trigger.onclick = (e) => {
         e.preventDefault();
-
-
         playerHandler(trigger, e, this);
       };
     });
 
-    answersForm.onchange = (e) => {
+    answersFormElement.onchange = (e) => {
       e.preventDefault();
       this.onAnswersFormChange();
     };
 
-    answersForm.onsubmit = (e) => {
+    answersFormElement.onsubmit = (e) => {
       e.preventDefault();
-      const genreAnswersList = [...answersForm.answer];
+      const genreAnswersList = [...answersFormElement.answer];
       const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
 
         if (this.question.answers[currentAnswer.id].genre === this.question.genre) {
@@ -79,10 +75,10 @@ class GameGenreView extends AbstractView {
   }
 
   onAnswersFormChange() {
-    const submitAnswerBtn = this.element.querySelector(`.genre-answer-send`);
-    const answersForm = this.element.querySelector(`.genre`);
-    const genreAnswersList = [...answersForm.answer];
-    submitAnswerBtn.disabled = !genreAnswersList.some((answer) => answer.checked);
+    const submitAnswerBtnElement = this.element.querySelector(`.genre-answer-send`);
+    const answersFormElement = this.element.querySelector(`.genre`);
+    const genreAnswersListElement = [...answersFormElement.answer];
+    submitAnswerBtnElement.disabled = !genreAnswersListElement.some((answer) => answer.checked);
   }
 
   updateTime(minutes, seconds) {
@@ -91,10 +87,8 @@ class GameGenreView extends AbstractView {
   }
 
   static onAnswer(isCorrect) {
-
     return isCorrect;
   }
-
 }
 
 

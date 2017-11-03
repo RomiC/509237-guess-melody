@@ -1,17 +1,17 @@
-import timeConverter from '../util/time-converter';
-import {INIT_NOTES} from './state-data';
+import convertTime from '../util/convert-time';
+import {INIT_NOTES} from '../data/state-data';
 
 
 const QUICK_ANSWER_TIME = 30;
 const TOTAL_QUESTIONS = 10;
 
-const questionTypes = {
+const QuestionTypes = {
 
   QUESTION_ARTIST: `artist`,
   QUESTION_GENRE: `genre`
 };
 
-const resultTypes = {
+const ResultTypes = {
   WIN: `win`,
   LOOSE: `loose`
 };
@@ -51,9 +51,7 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = TOTAL_QUEST
   // За каждую соверешнную ошибку вычитается 2 балла, но в 0 уйти нельзя
   scoreCount = Math.max(0, scoreCount - (INIT_NOTES - notesLeft));
 
-
   return scoreCount;
-
 };
 
 const getResultString = (statistics = [], result) => {
@@ -95,7 +93,7 @@ const getQuickAnswersCount = (answersArray) => {
 };
 
 const getStatString = (state, initialState, scoreCount) => {
-  const timeInfo = timeConverter(state.timeLeft);
+  const timeInfo = convertTime(state.timeLeft);
 
   return `За ${timeInfo.minutesSpend} минуты и ${timeInfo.secondsSpend} секунд
    <br>вы набрали ${scoreCount} баллов (${getQuickAnswersCount(state.answers)} быстрых)
@@ -115,5 +113,30 @@ const getTimer = (value) => {
   };
 };
 
+const getQuestion = (questions, num) => questions[num];
 
-export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, QUICK_ANSWER_TIME, questionTypes, resultTypes};
+const incrementQuestion = (state, questions) => {
+  const currentQuestion = state.question;
+  let nextQuestion = currentQuestion;
+
+  if (getQuestion(questions, currentQuestion + 1)) {
+    nextQuestion = currentQuestion + 1;
+  }
+
+  const nextState = Object.assign({}, state);
+  nextState.question = nextQuestion;
+
+  return nextState;
+};
+
+const setNotes = (state, notes) => {
+  if (notes < 0) {
+    throw new RangeError(`Can't set negative lives`);
+  }
+  state = Object.assign({}, state);
+  state.notesLeft = notes;
+  return state;
+};
+
+
+export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, getQuestion, incrementQuestion, setNotes, QUICK_ANSWER_TIME, QuestionTypes, ResultTypes};

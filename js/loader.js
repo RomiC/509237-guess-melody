@@ -1,15 +1,13 @@
 const SERVER_URL = `https://es.dump.academy/guess-melody`;
-
-const API_PATHS = {
+const USERNAME = `509237`;
+const ApiPaths = {
   QUESTIONS: `questions`,
   STATS: `stats`,
 };
 
-const USERNAME = `509237`;
-
 export default class Loader {
   static loadData() {
-    return fetch(`${SERVER_URL}/${API_PATHS.QUESTIONS}`).
+    return fetch(`${SERVER_URL}/${ApiPaths.QUESTIONS}`).
         then((res) => {
           if (res.ok) {
             return res.json();

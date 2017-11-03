@@ -1,8 +1,8 @@
 import AbstractView from '../view';
 import logo from '../includes/logo';
 import data from './result-data';
-import {getScore, getResultString, getStatString} from '../data/game-data';
-import {initialState} from "../data/state-data";
+import {getScore, getResultString, getStatString} from '../game/game-data';
+import {InitialState} from "../data/state-data";
 
 
 class ResultView extends AbstractView {
@@ -41,7 +41,7 @@ class ResultView extends AbstractView {
         timeLeft: state.timeLeft
       };
 
-      data.win.stat = getStatString(state, initialState, scoreCount);
+      data.win.stat = getStatString(state, InitialState, scoreCount);
 
       data.win.comparison = getResultString(state.statistics, result);
       this.resultData = data.win;
@@ -62,9 +62,9 @@ class ResultView extends AbstractView {
   }
 
   bind() {
-    const replayBtn = this.element.querySelector(`.main-replay`);
+    const replayBtnElement = this.element.querySelector(`.main-replay`);
 
-    replayBtn.onclick = (e) => {
+    replayBtnElement.onclick = (e) => {
       e.preventDefault();
       this.onReplay();
     };

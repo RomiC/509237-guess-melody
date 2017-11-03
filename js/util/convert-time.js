@@ -1,6 +1,7 @@
-import {initialState} from "../data/state-data";
+import {InitialState} from "../data/state-data";
 
-const timeConverter = (timeLeft, initTime = initialState.timeLeft) => {
+
+const convertTime = (timeLeft, initTime = InitialState.timeLeft) => {
   const timeSpend = initTime - timeLeft;
   const minutesLeft = Math.floor(timeLeft / 60);
   const secondsLeft = timeLeft - minutesLeft * 60;
@@ -8,7 +9,6 @@ const timeConverter = (timeLeft, initTime = initialState.timeLeft) => {
   const secondsSpend = timeSpend - minutesSpend * 60;
 
   return {timeSpend, minutesLeft, secondsLeft, minutesSpend, secondsSpend};
-
 };
 
-export default timeConverter;
+export default convertTime;

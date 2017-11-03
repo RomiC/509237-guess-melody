@@ -43,10 +43,9 @@ class GameArtistView extends AbstractView {
 
     this.timeMinsElement = this.element.querySelector(`.timer-value-mins`);
     this.timeSecsElement = this.element.querySelector(`.timer-value-secs`);
+    const artistAnswersListElement = this.element.querySelectorAll(`.main-answer-r`);
 
-    const artistAnswersList = this.element.querySelectorAll(`.main-answer-r`);
-
-    [...artistAnswersList].forEach((trigger) => {
+    [...artistAnswersListElement].forEach((trigger) => {
       trigger.onclick = (e) => {
         e.preventDefault();
         const isCorrect = this.question.answers[e.target.id].isCorrect;
@@ -54,10 +53,9 @@ class GameArtistView extends AbstractView {
       };
     });
 
-    const artistPlayersList = this.element.querySelectorAll(`.player`);
+    const artistPlayersListElement = this.element.querySelectorAll(`.player`);
 
-    [...artistPlayersList].forEach((trigger) => {
-
+    [...artistPlayersListElement].forEach((trigger) => {
       trigger.onclick = (e) => {
         e.preventDefault();
         playerHandler(trigger, e, this);
@@ -72,10 +70,10 @@ class GameArtistView extends AbstractView {
   }
 
   static onAnswer(isCorrect) {
-
     return isCorrect;
   }
 
 }
+
 
 export default GameArtistView;

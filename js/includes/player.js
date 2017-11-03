@@ -9,14 +9,12 @@ const playerWrapper = (id, src) => `
         </div>
       </div>`.trim();
 
-
 const playerHandler = (trigger, e, view) => {
 
   const audioAll = view.element.querySelectorAll(`audio`);
   const audioSelected = e.target.previousElementSibling;
 
   audioAll.forEach((audio) => {
-
     const button = audio.nextElementSibling;
 
     if (audio.id === audioSelected.id) {
@@ -36,5 +34,6 @@ const playerHandler = (trigger, e, view) => {
     }
   });
 };
+
 
 export {playerWrapper, playerHandler};
