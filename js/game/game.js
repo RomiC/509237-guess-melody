@@ -48,17 +48,19 @@ class GameScreen {
     this.level = getView(this.model.questions, this.model.state);
     const startedTime = this.model.state.timeLeft;
 
+    this.stopTimer();
+
     this.level.onAnswer = (isCorrect) => {
-      this.stopTimer();
 
       if (!isCorrect) {
         this.model.mistake();
       }
 
-      this.model.pushAnswer({isCorrect, time: startedTime - this.model.state.timeLeft});
+      this.model.pushAnswer([+isCorrect, startedTime - this.model.state.timeLeft]);
 
       // Если попытки кончились или вопросов больше нет - переход на экран результата
       if (this.model.state.notesLeft <= 0 || !this.model.nextQuestionAvailable()) {
+        this.model.cleanState();
         App.result(this.model.state);
       } else {
         switchAppScreen(this.level);
@@ -81,6 +83,7 @@ class GameScreen {
     // Если время вышло - переход на экран результата
     if (this.model.state.timeLeft <= 0) {
       this.stopTimer();
+      this.model.cleanState();
       App.result(this.model.state);
     }
   }

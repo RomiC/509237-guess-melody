@@ -64,4 +64,9 @@ export default class GameModel {
   nextQuestionAvailable() {
     return !!getQuestion(this.state.question + 1);
   }
+
+  cleanState() {
+    const {notesLeft, timeLeft, answers} = this.state;
+    this.state = {notesLeft, timeLeft, answers};
+  }
 }
