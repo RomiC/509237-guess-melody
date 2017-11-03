@@ -51,7 +51,6 @@ class GameScreen {
     this.stopTimer();
 
     this.level.onAnswer = (isCorrect) => {
-      // this.stopTimer();
 
       if (!isCorrect) {
         this.model.mistake();
@@ -61,7 +60,7 @@ class GameScreen {
 
       // Если попытки кончились или вопросов больше нет - переход на экран результата
       if (this.model.state.notesLeft <= 0 || !this.model.nextQuestionAvailable()) {
-        delete this.model.state.question;
+        this.model.cleanState();
         App.result(this.model.state);
       } else {
         switchAppScreen(this.level);
@@ -84,6 +83,7 @@ class GameScreen {
     // Если время вышло - переход на экран результата
     if (this.model.state.timeLeft <= 0) {
       this.stopTimer();
+      this.model.cleanState();
       App.result(this.model.state);
     }
   }

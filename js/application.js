@@ -4,6 +4,8 @@ import welcomeScreen from './welcome/welcome';
 import gameScreen from './game/game';
 import resultScreen from './result/result';
 
+import {b64Encode, b64Decode} from "./util/b64encoding";
+
 
 const ControllerId = {
   WELCOME: ``,
@@ -12,12 +14,12 @@ const ControllerId = {
 };
 
 const saveState = (state) => {
-  return JSON.stringify(state);
+  return b64Encode(JSON.stringify(state));
 };
 
 const loadState = (dataString) => {
   try {
-    return JSON.parse(dataString);
+    return JSON.parse(b64Decode(dataString));
   } catch (e) {
     return initialState;
   }
@@ -33,7 +35,7 @@ export default class Application {
   static init() {
     const hashChangeHandler = () => {
       const hashValue = location.hash.replace(`#`, ``);
-      const [id, data] = hashValue.split(`?`);
+      const [id, data] = hashValue.split(`=`);
       this.changeHash(id, data);
     };
     window.onhashchange = hashChangeHandler;
@@ -53,11 +55,11 @@ export default class Application {
   }
 
   static startGame(state = initialState) {
-    location.hash = `${ControllerId.GAME}?${saveState(state)}`;
+    location.hash = `${ControllerId.GAME}=${saveState(state)}`;
   }
 
   static result(state) {
-    location.hash = `${ControllerId.RESULT}?${saveState(state)}`;
+    location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
   }
 }
 
