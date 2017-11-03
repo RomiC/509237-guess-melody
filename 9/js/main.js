@@ -540,7 +540,7 @@ class GameModel {
   }
 
   cleanState() {
-    const {notesLeft, timeLeft, answers} = this.state.notesLeft;
+    const {notesLeft, timeLeft, answers} = this.state;
     this.state = {notesLeft, timeLeft, answers};
   }
 }
