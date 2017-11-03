@@ -14,12 +14,4 @@ export default class SplashScreen extends AbstractView {
     <h2 class="title main-title">Загрузка</h2>
   </section>`.trim();
   }
-
-  start() {
-    this.timeout = setTimeout(() => this.start(), 50);
-  }
-
-  stop() {
-    clearTimeout(this.timeout);
-  }
 }

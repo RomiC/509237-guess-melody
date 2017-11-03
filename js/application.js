@@ -69,11 +69,9 @@ export default class Application {
 
 const splash = new SplashScreen();
 switchAppScreen(splash);
-splash.start();
 
 Loader.loadData().
     then((jsonData) => {
-      splash.stop();
       Application.init(jsonData);
     }).
     catch(window.console.error);
