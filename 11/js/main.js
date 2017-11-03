@@ -872,13 +872,20 @@ class Application {
   }
 
   static result(state) {
+    let results = [];
+
     if (state.result === resultTypes.WIN) {
-      Loader.loadResults().then((jsonData) => {
-        Loader.saveResults(state).then(() => {
-          state.results = jsonData;
-          location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
-        }).catch(window.console.error);
-      }).catch(window.console.error);
+      Loader.loadResults()
+          .then((jsonData) => {
+            results = jsonData;
+          })
+          .then(Loader.saveResults(state))
+          .then(() => {
+            state.results = results;
+            location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
+          })
+          .catch(window.console.error);
+
     } else {
       location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
     }
@@ -888,11 +895,11 @@ class Application {
     const splash = new SplashScreen();
     switchAppScreen(splash);
 
-    Loader.loadData().
-        then((jsonData) => {
+    Loader.loadData()
+        .then((jsonData) => {
           Application.init(jsonData);
-        }).
-        catch(window.console.error);
+        })
+        .catch(window.console.error);
   }
 }
 
