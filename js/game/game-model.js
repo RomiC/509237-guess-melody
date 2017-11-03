@@ -66,9 +66,7 @@ export default class GameModel {
   }
 
   cleanState() {
-    const notesLeft = this.state.notesLeft;
-    const timeLeft = this.state.notesLeft;
-    const answers = this.state.answers;
+    const {notesLeft, timeLeft, answers} = this.state.notesLeft;
     this.state = {notesLeft, timeLeft, answers};
   }
 }
