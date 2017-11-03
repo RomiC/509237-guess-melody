@@ -1,16 +1,14 @@
-import {questions} from '../data/state-data';
-import {initialState} from '../data/state-data';
 import {getTimer} from '../data/game-data';
 
 
-const getQuestion = (num) => questions[num];
+const getQuestion = (questions, num) => questions[num];
 
-const nextQuestionState = (state) => {
+const nextQuestionState = (state, questions) => {
   const currentQuestion = state.question;
 
   let nextQuestion = currentQuestion;
 
-  if (getQuestion(currentQuestion + 1)) {
+  if (getQuestion(questions, currentQuestion + 1)) {
 
     nextQuestion = currentQuestion + 1;
 
@@ -32,14 +30,18 @@ const setNotes = (state, notes) => {
 };
 
 export default class GameModel {
-  constructor(state = initialState) {
-    this.state = state;
+  constructor(questions) {
+    this.state = {};
     this.state.answers = [];
     this.questions = questions;
   }
 
+  update(newState) {
+    return Object.assign(this.state, newState);
+  }
+
   nextQuestionScreen() {
-    this.state = nextQuestionState(this.state);
+    this.state = nextQuestionState(this.state, this.questions);
   }
 
   tick() {
@@ -62,7 +64,7 @@ export default class GameModel {
   }
 
   nextQuestionAvailable() {
-    return !!getQuestion(this.state.question + 1);
+    return !!getQuestion(this.questions, this.state.question + 1);
   }
 
   cleanState() {
