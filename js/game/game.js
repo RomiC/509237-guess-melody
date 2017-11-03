@@ -10,11 +10,7 @@ import GameGenreView from './game-genre-view';
 
 import App from '../application';
 
-const questionTypes = {
-
-  QUESTION_ARTIST: `artist`,
-  QUESTION_GENRE: `genre`
-};
+import {questionTypes} from '../data/game-data';
 
 const getView = (questions, state) => {
 
@@ -68,9 +64,13 @@ export default class GameScreen {
 
       this.model.pushAnswer([+isCorrect, startedTime - this.model.state.timeLeft]);
 
-      // Если попытки кончились или вопросов больше нет - переход на экран результата
-      if (this.model.state.notesLeft <= 0 || !this.model.nextQuestionAvailable()) {
-        this.model.cleanState();
+      // Если попытки кончились - переход на экран результата без статуса выйгрыша
+      if (this.model.state.notesLeft <= 0) {
+        this.model.cleanState(false);
+        App.result(this.model.state);
+        // Если вопросов больше нет - переход на экран результата со статусом выйгрыша
+      } else if (!this.model.nextQuestionAvailable()) {
+        this.model.cleanState(true);
         App.result(this.model.state);
       } else {
         switchAppScreen(this.level);
@@ -90,10 +90,10 @@ export default class GameScreen {
 
     this.timer = setTimeout(() => this.tick(), 1000);
 
-    // Если время вышло - переход на экран результата
+    // Если время вышло - переход на экран результата без статуса выйгрыша
     if (this.model.state.timeLeft <= 0) {
       this.stopTimer();
-      this.model.cleanState();
+      this.model.cleanState(false);
       App.result(this.model.state);
     }
   }

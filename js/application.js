@@ -1,4 +1,5 @@
 import {initialState} from './data/state-data';
+import {resultTypes} from './data/game-data';
 
 import welcomeScreen from './welcome/welcome';
 import GameScreen from './game/game';
@@ -6,9 +7,9 @@ import resultScreen from './result/result';
 import SplashScreen from './splash/splash-screen';
 
 import Loader from './loader';
-import switchAppScreen from "./util/switch-app-screen";
+import switchAppScreen from './util/switch-app-screen';
 
-import {b64Encode, b64Decode} from "./util/b64encoding";
+import {b64Encode, b64Decode} from './util/b64encoding';
 
 
 const ControllerId = {
@@ -63,7 +64,16 @@ export default class Application {
   }
 
   static result(state) {
-    location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
+    if (state.result === resultTypes.WIN) {
+      Loader.loadResults().then((jsonData) => {
+        Loader.saveResults(state).then(() => {
+          state.results = jsonData;
+          location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
+        }).catch(window.console.error);
+      }).catch(window.console.error);
+    } else {
+      location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
+    }
   }
 
   static showSplash() {

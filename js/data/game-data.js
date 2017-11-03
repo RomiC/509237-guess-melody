@@ -3,8 +3,20 @@ import {INIT_NOTES} from './state-data';
 
 
 const QUICK_ANSWER_TIME = 30;
+const TOTAL_QUESTIONS = 10;
 
-const getScore = (answersArray = [], notesLeft = 0, totalQuestions = 10) => {
+const questionTypes = {
+
+  QUESTION_ARTIST: `artist`,
+  QUESTION_GENRE: `genre`
+};
+
+const resultTypes = {
+  WIN: `win`,
+  LOOSE: `loose`
+};
+
+const getScore = (answersArray = [], notesLeft = 0, totalQuestions = TOTAL_QUESTIONS) => {
 
   // Пример массива с ответом:
   // [1, 30] = Правильный ответ за 30 секунд
@@ -104,4 +116,4 @@ const getTimer = (value) => {
 };
 
 
-export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, QUICK_ANSWER_TIME};
+export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, QUICK_ANSWER_TIME, questionTypes, resultTypes};
