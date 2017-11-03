@@ -884,7 +884,8 @@ class Application {
             state.results = results;
             location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
           })
-          .catch(window.console.error);
+          // Попытка отправить результат игры даже если не удалось загрузить результаты
+          .catch(() => Loader.saveResults(state));
 
     } else {
       location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
