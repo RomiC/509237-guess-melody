@@ -788,7 +788,12 @@ const USERNAME = `509237`;
 class Loader {
   static loadData() {
     return fetch(`${SERVER_URL}/${API_PATHS.QUESTIONS}`).
-        then((res) => res.json());
+        then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+          return Promise.reject();
+        });
   }
 
   static loadResults(name = USERNAME) {
