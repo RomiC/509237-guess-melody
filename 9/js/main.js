@@ -538,6 +538,13 @@ class GameModel {
   nextQuestionAvailable() {
     return !!getQuestion(this.state.question + 1);
   }
+
+  cleanState() {
+    const notesLeft = this.state.notesLeft;
+    const timeLeft = this.state.notesLeft;
+    const answers = this.state.answers;
+    this.state = {notesLeft, timeLeft, answers};
+  }
 }
 
 const headerTimerValue = (mins, secs) => `
@@ -827,7 +834,6 @@ class GameScreen {
     this.stopTimer();
 
     this.level.onAnswer = (isCorrect) => {
-      // this.stopTimer();
 
       if (!isCorrect) {
         this.model.mistake();
@@ -837,7 +843,7 @@ class GameScreen {
 
       // Если попытки кончились или вопросов больше нет - переход на экран результата
       if (this.model.state.notesLeft <= 0 || !this.model.nextQuestionAvailable()) {
-        delete this.model.state.question;
+        this.model.cleanState();
         Application.result(this.model.state);
       } else {
         switchAppScreen(this.level);
@@ -860,6 +866,7 @@ class GameScreen {
     // Если время вышло - переход на экран результата
     if (this.model.state.timeLeft <= 0) {
       this.stopTimer();
+      this.model.cleanState();
       Application.result(this.model.state);
     }
   }
@@ -976,6 +983,19 @@ class ResultScreen {
 
 var resultScreen = new ResultScreen();
 
+const b64Encode = (str) => {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+      function toSolidBytes(match, p1) {
+        return String.fromCharCode(`0x` + p1);
+      }));
+};
+
+const b64Decode = (str) => {
+  return decodeURIComponent(atob(str).split(``).map(function (c) {
+    return `%` + (`00` + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(``));
+};
+
 const ControllerId = {
   WELCOME: ``,
   GAME: `game`,
@@ -983,12 +1003,12 @@ const ControllerId = {
 };
 
 const saveState = (state) => {
-  return JSON.stringify(state);
+  return b64Encode(JSON.stringify(state));
 };
 
 const loadState = (dataString) => {
   try {
-    return JSON.parse(dataString);
+    return JSON.parse(b64Decode(dataString));
   } catch (e) {
     return initialState;
   }
@@ -1004,7 +1024,7 @@ class Application {
   static init() {
     const hashChangeHandler = () => {
       const hashValue = location.hash.replace(`#`, ``);
-      const [id, data] = hashValue.split(`?`);
+      const [id, data] = hashValue.split(`=`);
       this.changeHash(id, data);
     };
     window.onhashchange = hashChangeHandler;
@@ -1024,11 +1044,11 @@ class Application {
   }
 
   static startGame(state = initialState) {
-    location.hash = `${ControllerId.GAME}?${saveState(state)}`;
+    location.hash = `${ControllerId.GAME}=${saveState(state)}`;
   }
 
   static result(state) {
-    location.hash = `${ControllerId.RESULT}?${saveState(state)}`;
+    location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
   }
 }
 
