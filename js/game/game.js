@@ -1,4 +1,4 @@
-import {questionTypes, initialState} from '../data/state-data';
+import {initialState} from '../data/state-data';
 import switchAppScreen from '../util/switch-app-screen';
 import timeConverter from '../util/time-converter';
 
@@ -10,6 +10,11 @@ import GameGenreView from './game-genre-view';
 
 import App from '../application';
 
+const questionTypes = {
+
+  QUESTION_ARTIST: `artist`,
+  QUESTION_GENRE: `genre`
+};
 
 const getView = (questions, state) => {
 
@@ -32,10 +37,15 @@ const getView = (questions, state) => {
 };
 
 
-class GameScreen {
+export default class GameScreen {
+
+  constructor(questions) {
+    this.model = new GameModel(questions);
+    this.model.questions = questions;
+  }
 
   init(state = initialState) {
-    this.model = new GameModel(state);
+    this.model.update(state);
     this.changeQuestion(false);
   }
 
@@ -92,5 +102,3 @@ class GameScreen {
     clearTimeout(this.timer);
   }
 }
-
-export default new GameScreen();

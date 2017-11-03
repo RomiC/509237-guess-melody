@@ -22,9 +22,9 @@ class GameGenreView extends AbstractView {
     ${this.header.template}
 
     <div class="main-wrap">
-      <h2 class="title">${this.question.title}</h2>
+      <h2 class="title">${this.question.question}</h2>
       <form class="genre">
-        ${this.question.answers.map((answer, index) => genreAnswerWrapper(index, answer.track.src)).join(``)}
+        ${this.question.answers.map((answer, index) => genreAnswerWrapper(index, answer.src)).join(``)}
         <button class="genre-answer-send" type="submit">Ответить</button>
       </form>
     </div>
@@ -65,7 +65,7 @@ class GameGenreView extends AbstractView {
       const genreAnswersList = [...answersForm.answer];
       const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
 
-        if (this.question.answers[currentAnswer.id].isCorrect) {
+        if (this.question.answers[currentAnswer.id].genre === this.question.genre) {
           result = result && currentAnswer.checked;
         } else {
           result = result && !currentAnswer.checked;

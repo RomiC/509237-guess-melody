@@ -1,4 +1,2 @@
-import App from './application';
+import './application';
 
-
-App.init();

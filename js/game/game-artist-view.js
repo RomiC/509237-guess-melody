@@ -26,15 +26,13 @@ class GameArtistView extends AbstractView {
     ${this.header.template}
 
     <div class="main-wrap">
-      <h2 class="title main-title">${this.question.title}</h2>
+      <h2 class="title main-title">${this.question.question}</h2>
 
-      ${playerWrapper(0, this.question.answers.reduce((correctAnswer, currentAnswer) => {
-        return currentAnswer.isCorrect ? currentAnswer : correctAnswer;
-      }, {}).track.src)}
+      ${playerWrapper(0, this.question.src)}
       
       <form class="main-list">
 
-      ${this.question.answers.map((answer, index) => artistAnswerWrapper(index, answer.track.artist, answer.track.image)).join(``)}
+      ${this.question.answers.map((answer, index) => artistAnswerWrapper(index, answer.title, answer.image.url)).join(``)}
       </form>
     </div>
   </section>`.trim()
