@@ -1,4 +1,5 @@
 import {initialState} from './data/state-data';
+import {resultTypes} from './data/game-data';
 
 import welcomeScreen from './welcome/welcome';
 import GameScreen from './game/game';
@@ -6,9 +7,9 @@ import resultScreen from './result/result';
 import SplashScreen from './splash/splash-screen';
 
 import Loader from './loader';
-import switchAppScreen from "./util/switch-app-screen";
+import switchAppScreen from './util/switch-app-screen';
 
-import {b64Encode, b64Decode} from "./util/b64encoding";
+import {b64Encode, b64Decode} from './util/b64encoding';
 
 
 const ControllerId = {
@@ -63,19 +64,32 @@ export default class Application {
   }
 
   static result(state) {
-    location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
+    let results = [];
+
+    if (state.result === resultTypes.WIN) {
+      Loader.loadResults()
+          .then((jsonData) => {
+            results = jsonData;
+          })
+          .then(() => Loader.saveResults(state))
+          .then(() => {
+            state.results = results;
+            location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
+          })
+          // Попытка отправить результат игры даже если не удалось загрузить результаты
+          .catch(() => Loader.saveResults(state));
+
+    } else {
+      location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
+    }
   }
 
   static showSplash() {
     const splash = new SplashScreen();
     switchAppScreen(splash);
 
-    Loader.loadData().
-        then((jsonData) => {
-          Application.init(jsonData);
-        }).
-        catch(window.console.error);
+    Loader.loadData()
+        .then((jsonData) => Application.init(jsonData))
+        .catch(window.console.error);
   }
 }
-
-

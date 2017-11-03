@@ -1,5 +1,5 @@
 import {getTimer} from '../data/game-data';
-
+import {resultTypes} from '../data/game-data';
 
 const getQuestion = (questions, num) => questions[num];
 
@@ -67,8 +67,13 @@ export default class GameModel {
     return !!getQuestion(this.questions, this.state.question + 1);
   }
 
-  cleanState() {
+  cleanState(resultWin = false) {
     const {notesLeft, timeLeft, answers} = this.state;
-    this.state = {notesLeft, timeLeft, answers};
+
+    if (resultWin) {
+      this.state = {notesLeft, timeLeft, answers, result: resultTypes.WIN};
+    } else {
+      this.state = {notesLeft, timeLeft, answers, result: resultTypes.LOOSE};
+    }
   }
 }
