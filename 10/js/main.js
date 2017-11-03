@@ -827,16 +827,20 @@ class Application {
   static result(state) {
     location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
   }
+
+  static showSplash() {
+    const splash = new SplashScreen();
+    switchAppScreen(splash);
+
+    Loader.loadData().
+        then((jsonData) => {
+          Application.init(jsonData);
+        }).
+        catch(window.console.error);
+  }
 }
 
-const splash = new SplashScreen();
-switchAppScreen(splash);
-
-Loader.loadData().
-    then((jsonData) => {
-      Application.init(jsonData);
-    }).
-    catch(window.console.error);
+Application.showSplash();
 
 }());
 
