@@ -71,7 +71,7 @@ export default class Application {
           .then((jsonData) => {
             results = jsonData;
           })
-          .then(Loader.saveResults(state))
+          .then(() => Loader.saveResults(state))
           .then(() => {
             state.results = results;
             location.hash = `${ControllerId.RESULT}=${saveState(state)}`;
@@ -88,11 +88,7 @@ export default class Application {
     switchAppScreen(splash);
 
     Loader.loadData()
-        .then((jsonData) => {
-          Application.init(jsonData);
-        })
+        .then((jsonData) => Application.init(jsonData))
         .catch(window.console.error);
   }
 }
-
-
