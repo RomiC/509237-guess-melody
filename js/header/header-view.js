@@ -1,5 +1,5 @@
 import AbstractView from '../view';
-
+import {INIT_NOTES} from '../data/state-data';
 
 const headerTimerValue = (mins, secs) => `
       <div class="timer-value" xmlns="http://www.w3.org/1999/xhtml">
@@ -8,9 +8,9 @@ const headerTimerValue = (mins, secs) => `
         --><span class="timer-value-secs">${secs}</span>
       </div>`.trim();
 
-const headerMistakes = (notesLeft) => `
+const headerMistakes = (notes) => `
     <div class="main-mistakes">
-    ${new Array(notesLeft).fill(`<img class="main-mistake" src="img/wrong-answer.png" width="35" height="49">`).join(``)}
+    ${new Array(notes).fill(`<img class="main-mistake" src="img/wrong-answer.png" width="35" height="49">`).join(``)}
     </div>`.trim();
 
 const headerSvgCircle = (state) => `
@@ -32,6 +32,6 @@ export default class HeaderView extends AbstractView {
   get template() {
     return `
     ${headerSvgCircle(this.state)}
-    ${headerMistakes(this.state.notesLeft)}`.trim();
+    ${headerMistakes(INIT_NOTES - this.state.notesLeft)}`.trim();
   }
 }
