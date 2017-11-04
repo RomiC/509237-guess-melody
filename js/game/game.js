@@ -58,21 +58,24 @@ export default class GameScreen {
 
     this.level.onAnswer = (isCorrect) => {
 
-      if (!isCorrect) {
-        this.model.mistake();
-      }
-
-      this.model.pushAnswer([+isCorrect, startedTime - this.model.state.timeLeft]);
-
       // Если попытки кончились - переход на экран результата без статуса выйгрыша
-      if (this.model.state.notesLeft <= 0) {
+      if (this.model.state.notesLeft <= 0 && !isCorrect) {
         this.model.cleanState(false);
         App.showResult(this.model.state);
-        // Если вопросов больше нет - переход на экран результата со статусом выйгрыша
       } else if (!this.model.nextQuestionAvailable()) {
+
+        // Если вопросов больше нет - переход на экран результата со статусом выйгрыша
         this.model.cleanState(true);
         App.showResult(this.model.state);
       } else {
+
+        //  Играем дальше
+        if (!isCorrect) {
+          this.model.mistake();
+        }
+
+        this.model.pushAnswer([+isCorrect, startedTime - this.model.state.timeLeft]);
+
         switchAppScreen(this.level);
         this.changeQuestion();
       }
