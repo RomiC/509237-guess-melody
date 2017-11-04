@@ -1,7 +1,7 @@
 const playerWrapper = (id, src) => `
       <div class="player-wrapper">
         <div class="player">
-          <audio src="${src}" id="audio-${id}"></audio>
+          <audio preload="auto" src="${src}" id="audio-${id}"></audio>
           <button class="player-control player-control--play"></button>
           <div class="player-track">
             <span class="player-status"></span>
@@ -10,31 +10,54 @@ const playerWrapper = (id, src) => `
       </div>`.trim();
 
 
+const updateClasses = (element, play = false) => {
+  if (play) {
+    element.classList.remove(`player-control--play`);
+    element.classList.add(`player-control--pause`);
+  } else {
+    element.classList.remove(`player-control--pause`);
+    element.classList.add(`player-control--play`);
+  }
+};
+
+const fetchAudioAndPlay = (audio, button) => {
+  fetch(audio.src)
+      .then(() => {
+        return audio.play();
+      })
+      .catch(() => {
+        updateClasses(button, false);
+      });
+};
+
 const playerHandler = (trigger, e, view) => {
 
-  const audioAll = view.element.querySelectorAll(`audio`);
-  const audioSelected = e.target.previousElementSibling;
+  const audioElementsList = view.element.querySelectorAll(`audio`);
 
-  audioAll.forEach((audio) => {
+  let selectedAudioElement;
+  if (e.target.classList.contains(`player-control`)) {
+    selectedAudioElement = e.target.previousElementSibling;
+  } else {
+    selectedAudioElement = e.target.querySelector(`audio`);
+  }
 
+  audioElementsList.forEach((audio) => {
     const button = audio.nextElementSibling;
 
-    if (audio.id === audioSelected.id) {
+    if (audio.id === selectedAudioElement.id) {
       if (button.classList.contains(`player-control--play`)) {
-        audio.play();
-        button.classList.remove(`player-control--play`);
-        button.classList.add(`player-control--pause`);
+        fetchAudioAndPlay(audio, button);
+        updateClasses(button, true);
       } else {
-        button.classList.remove(`player-control--pause`);
-        button.classList.add(`player-control--play`);
+        updateClasses(button, false);
         audio.pause();
       }
     } else {
       audio.pause();
-      button.classList.remove(`player-control--pause`);
-      button.classList.add(`player-control--play`);
+      updateClasses(button, false);
     }
   });
 };
+
 
 export {playerWrapper, playerHandler};

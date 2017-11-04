@@ -1,6 +1,8 @@
+import convertTime from '../util/convert-time';
+
 import AbstractView from '../view';
 import logo from '../includes/logo';
-import timeConverter from '../util/time-converter';
+
 
 class WelcomeView extends AbstractView {
   constructor(state) {
@@ -9,7 +11,7 @@ class WelcomeView extends AbstractView {
   }
 
   get template() {
-    const timeInfo = timeConverter(this.state.timeLeft);
+    const timeInfo = convertTime(this.state.timeLeft);
 
     return (`
   <section class="main main--welcome">
@@ -27,9 +29,9 @@ class WelcomeView extends AbstractView {
   }
 
   bind() {
-    const buttonPlay = this.element.querySelector(`.main-play`);
+    const buttonPlayElement = this.element.querySelector(`.main-play`);
 
-    buttonPlay.onclick = (e) => {
+    buttonPlayElement.onclick = (e) => {
       e.preventDefault();
       this.onStart();
     };

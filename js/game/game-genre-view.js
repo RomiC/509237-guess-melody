@@ -1,6 +1,8 @@
 import AbstractView from '../view';
 import {playerWrapper, playerHandler} from '../includes/player';
 
+import {updateTimeElements} from './game-data';
+
 
 const genreAnswerWrapper = (id, src) => `
         <div class="genre-answer">
@@ -34,36 +36,34 @@ class GameGenreView extends AbstractView {
 
   bind() {
 
-    this.timeMinsElement = this.element.querySelector(`.timer-value-mins`);
-    this.timeSecsElement = this.element.querySelector(`.timer-value-secs`);
+    this.timerElement = this.element.querySelector(`.timer-value`);
+    this.timeMinsElement = this.timerElement.querySelector(`.timer-value-mins`);
+    this.timeSecsElement = this.timerElement.querySelector(`.timer-value-secs`);
 
-    const submitAnswerBtn = this.element.querySelector(`.genre-answer-send`);
-    submitAnswerBtn.disabled = true;
+    this.submitAnswerBtnElement = this.element.querySelector(`.genre-answer-send`);
+    const answersFormElement = this.element.querySelector(`.genre`);
+    this.genreAnswersListElement = [...answersFormElement.answer];
 
-    const answersForm = this.element.querySelector(`.genre`);
+    this.submitAnswerBtnElement.disabled = true;
 
-    const genrePlayersList = this.element.querySelectorAll(`.player`);
+    const genrePlayerElementsList = this.element.querySelectorAll(`.player`);
 
-
-    [...genrePlayersList].forEach((trigger) => {
+    [...genrePlayerElementsList].forEach((trigger) => {
 
       trigger.onclick = (e) => {
         e.preventDefault();
-
-
         playerHandler(trigger, e, this);
       };
     });
 
-    answersForm.onchange = (e) => {
+    answersFormElement.onchange = (e) => {
       e.preventDefault();
       this.onAnswersFormChange();
     };
 
-    answersForm.onsubmit = (e) => {
+    answersFormElement.onsubmit = (e) => {
       e.preventDefault();
-      const genreAnswersList = [...answersForm.answer];
-      const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
+      const isCorrect = this.genreAnswersListElement.reduce((result, currentAnswer) => {
 
         if (this.question.answers[currentAnswer.id].genre === this.question.genre) {
           result = result && currentAnswer.checked;
@@ -79,22 +79,16 @@ class GameGenreView extends AbstractView {
   }
 
   onAnswersFormChange() {
-    const submitAnswerBtn = this.element.querySelector(`.genre-answer-send`);
-    const answersForm = this.element.querySelector(`.genre`);
-    const genreAnswersList = [...answersForm.answer];
-    submitAnswerBtn.disabled = !genreAnswersList.some((answer) => answer.checked);
+    this.submitAnswerBtnElement.disabled = !this.genreAnswersListElement.some((answer) => answer.checked);
   }
 
-  updateTime(minutes, seconds) {
-    this.timeMinsElement.textContent = minutes;
-    this.timeSecsElement.textContent = seconds;
+  updateTime(timeLeft) {
+    updateTimeElements(timeLeft, this.timerElement, this.timeMinsElement, this.timeSecsElement);
   }
 
   static onAnswer(isCorrect) {
-
     return isCorrect;
   }
-
 }
 
 

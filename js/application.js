@@ -1,15 +1,13 @@
-import {initialState} from './data/state-data';
-import {resultTypes} from './data/game-data';
+import {InitialState} from './data/state-data';
+import {ResultTypes} from './game/game-data';
+import Loader from './loader';
+import switchAppScreen from './util/switch-app-screen';
+import {b64Encode, b64Decode} from './util/b64encoding';
 
 import welcomeScreen from './welcome/welcome';
 import GameScreen from './game/game';
 import resultScreen from './result/result';
 import SplashScreen from './splash/splash-screen';
-
-import Loader from './loader';
-import switchAppScreen from './util/switch-app-screen';
-
-import {b64Encode, b64Decode} from './util/b64encoding';
 
 
 const ControllerId = {
@@ -26,7 +24,7 @@ const loadState = (dataString) => {
   try {
     return JSON.parse(b64Decode(dataString));
   } catch (e) {
-    return initialState;
+    return InitialState;
   }
 };
 
@@ -59,14 +57,14 @@ export default class Application {
     location.hash = ControllerId.WELCOME;
   }
 
-  static startGame(state = initialState) {
+  static startGame(state = InitialState) {
     location.hash = `${ControllerId.GAME}=${saveState(state)}`;
   }
 
-  static result(state) {
+  static showResult(state) {
     let results = [];
 
-    if (state.result === resultTypes.WIN) {
+    if (state.result === ResultTypes.WIN) {
       Loader.loadResults()
           .then((jsonData) => {
             results = jsonData;

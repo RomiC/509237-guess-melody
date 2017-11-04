@@ -2,7 +2,7 @@ import switchAppScreen from '../util/switch-app-screen';
 import ResultView from './result-view';
 import App from '../application';
 
-import {getScore} from "../data/game-data";
+import {getScore} from "../game/game-data";
 
 
 class ResultScreen {
@@ -23,7 +23,6 @@ class ResultScreen {
     this.state.statistics = statistics;
 
     this.view = new ResultView(state);
-
     switchAppScreen(this.view);
 
     this.view.onReplay = () => {
@@ -31,5 +30,6 @@ class ResultScreen {
     };
   }
 }
+
 
 export default new ResultScreen();

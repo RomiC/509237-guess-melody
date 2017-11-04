@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {getScore, getResultString, getTimer, getQuickAnswersCount, QUICK_ANSWER_TIME} from './game-data';
+import {getScore, getResultString, getTimer, getQuickAnswersCount, getDeclension, QUICK_ANSWER_TIME} from './game-data';
 
 
 describe(`getScore`, () => {
@@ -48,7 +48,7 @@ describe(`getResultString`, () => {
         getResultString([4, 5, 8, 9], {scoreCount: 3, notesLeft: 3, timeLeft: 30}));
   });
   it(`1-st place with 0 gamers`, () => {
-    assert.equal(`Вы заняли 1-ое место из 1 игроков. Это лучше чем у 0% игроков`,
+    assert.equal(`Вы заняли 1-ое место из 1 игрока. Это лучше чем у 0% игроков`,
         getResultString([], {scoreCount: 3, notesLeft: 3, timeLeft: 30}));
   });
 });
@@ -84,5 +84,36 @@ describe(`getQuickAnswersCount`, () => {
   it(`should return 1 when 1 correct quick answer`, () => {
     assert.equal(1, getQuickAnswersCount([[1, QUICK_ANSWER_TIME]], [1, QUICK_ANSWER_TIME - 1]));
   });
+});
 
+
+// https://developer.mozilla.org/en-US/docs/Mozilla/Localization/Localization_and_Plurals
+// Plural rule #7 (3 forms)
+// Families: Slavic (Belarusian, Bosnian, Croatian, Serbian, Russian, Ukrainian)
+// ends in 1, excluding 11: 1, 21, 31, 41, 51, 61, 71, 81, 91, 101, 121, 131, 141, 151, 161, 171, 181, 191, 201, 221, ...
+// ends in 2-4, excluding 12-14: 2, 3, 4, 22, 23, 24, 32, 33, 34, 42, 43, 44, 52, 53, 54, 62, 63, 64, 72, 73, 74, 82, ...
+// everything else: 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 26, 27, 28, 29, 30, 35, 36, 37, ...
+
+describe(`getDeclension`, () => {
+  it(`1 минуту`, () => {
+    assert.equal(`минуту`, getDeclension(1, [`минуту`, `минуты`, `минут`]));
+  });
+  it(`2 минуты`, () => {
+    assert.equal(`минуты`, getDeclension(2, [`минуту`, `минуты`, `минут`]));
+  });
+  it(`0 минут`, () => {
+    assert.equal(`минут`, getDeclension(0, [`минуту`, `минуты`, `минут`]));
+  });
+  it(`11 минут`, () => {
+    assert.equal(`минут`, getDeclension(11, [`минуту`, `минуты`, `минут`]));
+  });
+  it(`12 минут`, () => {
+    assert.equal(`минут`, getDeclension(12, [`минуту`, `минуты`, `минут`]));
+  });
+  it(`13 минут`, () => {
+    assert.equal(`минут`, getDeclension(13, [`минуту`, `минуты`, `минут`]));
+  });
+  it(`14 минут`, () => {
+    assert.equal(`минут`, getDeclension(14, [`минуту`, `минуты`, `минут`]));
+  });
 });
