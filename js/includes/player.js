@@ -1,4 +1,4 @@
-const playerWrapper = (id, src) => `
+const getPlayerWrapper = (id, src) => `
       <div class="player-wrapper">
         <div class="player">
           <audio preload="none" src="${src}" id="audio-${id}"></audio>
@@ -40,7 +40,7 @@ const fetchAudioAndPlay = (audio, button) => {
   fetch(audio.src)
       .then(() => {
         updateLoadingClasses(audio, false, true);
-        audioPlay(audio, button);
+        playAudio(audio, button);
       })
       .catch(() => {
         updateLoadingClasses(audio, false, false);
@@ -48,7 +48,7 @@ const fetchAudioAndPlay = (audio, button) => {
       });
 };
 
-const audioPlay = (audio, button) => {
+const playAudio = (audio, button) => {
   updatePlayClasses(button, true);
   audio.play()
       .catch(() => {
@@ -57,7 +57,7 @@ const audioPlay = (audio, button) => {
       });
 };
 
-const audioPause = (audio, button) => {
+const pauseAudio = (audio, button) => {
   audio.pause();
   updatePlayClasses(button, false);
 };
@@ -74,7 +74,7 @@ const isLoading = (audio) => {
   return audio.classList.contains(`player-control--loading`);
 };
 
-const playerHandler = (trigger, e, view) => {
+const onPlayerClick = (trigger, e, view) => {
 
   const audioElementsList = view.element.querySelectorAll(`audio`);
 
@@ -96,16 +96,16 @@ const playerHandler = (trigger, e, view) => {
         if (!trackIsLoaded || (!trackIsLoaded && !trackIsLoading)) {
           fetchAudioAndPlay(audio, button);
         } else {
-          audioPlay(audio, button);
+          playAudio(audio, button);
         }
       } else {
-        audioPause(audio, button);
+        pauseAudio(audio, button);
       }
     } else {
-      audioPause(audio, button);
+      pauseAudio(audio, button);
     }
   });
 };
 
 
-export {playerWrapper, playerHandler};
+export {getPlayerWrapper, onPlayerClick};

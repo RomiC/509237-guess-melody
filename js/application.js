@@ -36,13 +36,13 @@ export default class Application {
       [ControllerId.RESULT]: resultScreen
     };
 
-    const hashChangeHandler = () => {
+    const onHashChange = () => {
       const hashValue = location.hash.replace(`#`, ``);
       const [id, data] = hashValue.split(`=`);
       this.changeHash(id, data);
     };
-    window.onhashchange = hashChangeHandler;
-    hashChangeHandler();
+    window.onhashchange = onHashChange;
+    onHashChange();
   }
 
   static changeHash(id, data) {

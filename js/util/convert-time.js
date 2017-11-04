@@ -1,4 +1,4 @@
-import {InitialState} from "../data/state-data";
+import {InitialState} from '../data/state-data';
 
 
 const convertTime = (timeLeft, initTime = InitialState.timeLeft) => {

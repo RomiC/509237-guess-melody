@@ -62,7 +62,7 @@ export default class GameScreen {
       if (this.model.state.notesLeft <= 0 && !isCorrect) {
         this.model.cleanState(false);
         App.showResult(this.model.state);
-      } else if (!this.model.nextQuestionAvailable()) {
+      } else if (!this.model.checkNextQuestionAvailable()) {
 
         // Если вопросов больше нет - переход на экран результата со статусом выйгрыша
         this.model.cleanState(true);
@@ -71,7 +71,7 @@ export default class GameScreen {
 
         //  Играем дальше
         if (!isCorrect) {
-          this.model.mistake();
+          this.model.makeMistake();
         }
 
         this.model.pushAnswer([+isCorrect, startedTime - this.model.state.timeLeft]);
