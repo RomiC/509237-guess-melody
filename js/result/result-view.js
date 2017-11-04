@@ -2,7 +2,7 @@ import AbstractView from '../view';
 import logo from '../includes/logo';
 import data from './result-data';
 import {getScore, getResultString, getStatString} from '../game/game-data';
-import {InitialState} from "../data/state-data";
+import {InitialState} from '../data/state-data';
 
 
 class ResultView extends AbstractView {
