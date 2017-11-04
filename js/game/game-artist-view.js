@@ -1,10 +1,10 @@
 import AbstractView from '../view';
-import {playerWrapper, playerHandler} from '../includes/player';
+import {getPlayerWrapper, onPlayerClick} from '../includes/player';
 
 import {updateTimeElements} from './game-data';
 
 
-const artistAnswerWrapper = (id, artist, image) => `
+const getArtistAnswerWrapper = (id, artist, image) => `
         <div class="main-answer-wrapper">
           <input class="main-answer-r" type="radio" id="${id}" name="answer" value="${id}"/>
           <label class="main-answer" for="${id}">
@@ -30,11 +30,11 @@ class GameArtistView extends AbstractView {
     <div class="main-wrap">
       <h2 class="title main-title">${this.question.question}</h2>
 
-      ${playerWrapper(0, this.question.src)}
+      ${getPlayerWrapper(0, this.question.src)}
       
       <form class="main-list">
 
-      ${this.question.answers.map((answer, index) => artistAnswerWrapper(index, answer.title, answer.image.url)).join(``)}
+      ${this.question.answers.map((answer, index) => getArtistAnswerWrapper(index, answer.title, answer.image.url)).join(``)}
       </form>
     </div>
   </section>`.trim()
@@ -45,9 +45,9 @@ class GameArtistView extends AbstractView {
     this.timerElement = this.element.querySelector(`.timer-value`);
     this.timeMinsElement = this.timerElement.querySelector(`.timer-value-mins`);
     this.timeSecsElement = this.timerElement.querySelector(`.timer-value-secs`);
-    const artistAnswersListElement = this.element.querySelectorAll(`.main-answer-r`);
+    const artistAnswerElements = this.element.querySelectorAll(`.main-answer-r`);
 
-    [...artistAnswersListElement].forEach((trigger) => {
+    [...artistAnswerElements].forEach((trigger) => {
       trigger.onclick = (e) => {
         e.preventDefault();
         const isCorrect = this.question.answers[e.target.id].isCorrect;
@@ -55,12 +55,12 @@ class GameArtistView extends AbstractView {
       };
     });
 
-    const artistPlayersListElement = this.element.querySelectorAll(`.player`);
+    const artistPlayerElements = this.element.querySelectorAll(`.player`);
 
-    [...artistPlayersListElement].forEach((trigger) => {
+    [...artistPlayerElements].forEach((trigger) => {
       trigger.onclick = (e) => {
         e.preventDefault();
-        playerHandler(trigger, e, this);
+        onPlayerClick(trigger, e, this);
       };
 
     });

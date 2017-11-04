@@ -36,7 +36,7 @@ class GameModel {
     return this.state.notesLeft > 0;
   }
 
-  mistake() {
+  makeMistake() {
     if (this.canMistake()) {
       this.state = setNotes(this.state, this.state.notesLeft - 1);
     }
@@ -46,7 +46,7 @@ class GameModel {
     this.state.answers.push(answer);
   }
 
-  nextQuestionAvailable() {
+  checkNextQuestionAvailable() {
     return !!getQuestion(this.questions, this.state.question + 1);
   }
 }

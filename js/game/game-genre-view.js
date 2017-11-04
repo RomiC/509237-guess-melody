@@ -1,12 +1,12 @@
 import AbstractView from '../view';
-import {playerWrapper, playerHandler} from '../includes/player';
+import {getPlayerWrapper, onPlayerClick} from '../includes/player';
 
 import {updateTimeElements} from './game-data';
 
 
-const genreAnswerWrapper = (id, src) => `
+const getGenreAnswerWrapper = (id, src) => `
         <div class="genre-answer">
-          ${playerWrapper(id, src)}
+          ${getPlayerWrapper(id, src)}
           <input type="checkbox" name="answer" value="${id}" id="${id}">
           <label class="genre-answer-check" for="${id}"></label>
         </div>`.trim();
@@ -26,7 +26,7 @@ class GameGenreView extends AbstractView {
     <div class="main-wrap">
       <h2 class="title">${this.question.question}</h2>
       <form class="genre">
-        ${this.question.answers.map((answer, index) => genreAnswerWrapper(index, answer.src)).join(``)}
+        ${this.question.answers.map((answer, index) => getGenreAnswerWrapper(index, answer.src)).join(``)}
         <button class="genre-answer-send" type="submit">Ответить</button>
       </form>
     </div>
@@ -46,13 +46,13 @@ class GameGenreView extends AbstractView {
 
     this.submitAnswerBtnElement.disabled = true;
 
-    const genrePlayerElementsList = this.element.querySelectorAll(`.player`);
+    const genrePlayerElements = this.element.querySelectorAll(`.player`);
 
-    [...genrePlayerElementsList].forEach((trigger) => {
+    [...genrePlayerElements].forEach((trigger) => {
 
       trigger.onclick = (e) => {
         e.preventDefault();
-        playerHandler(trigger, e, this);
+        onPlayerClick(trigger, e, this);
       };
     });
 
