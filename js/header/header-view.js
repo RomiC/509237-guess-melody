@@ -1,5 +1,5 @@
 import AbstractView from '../view';
-import {INIT_NOTES} from '../data/state-data';
+import {InitialState} from '../data/state-data';
 
 const headerTimerValue = (mins, secs) => `
       <div class="timer-value" xmlns="http://www.w3.org/1999/xhtml">
@@ -32,6 +32,6 @@ export default class HeaderView extends AbstractView {
   get template() {
     return `
     ${headerSvgCircle(this.state)}
-    ${headerMistakes(INIT_NOTES - this.state.notesLeft)}`.trim();
+    ${headerMistakes(InitialState.notesLeft - this.state.notesLeft)}`.trim();
   }
 }

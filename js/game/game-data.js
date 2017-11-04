@@ -1,5 +1,5 @@
 import convertTime from '../util/convert-time';
-import {INIT_NOTES} from '../data/state-data';
+import {InitialState} from '../data/state-data';
 
 
 const QUICK_ANSWER_TIME = 30;
@@ -50,7 +50,7 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = TOTAL_QUEST
   }, 0);
 
   // За каждую соверешнную ошибку вычитается 2 балла, но в 0 уйти нельзя
-  scoreCount = Math.max(0, scoreCount - (INIT_NOTES - notesLeft));
+  scoreCount = Math.max(0, scoreCount - (InitialState.notesLeft - notesLeft));
 
   return scoreCount;
 };
