@@ -1,6 +1,8 @@
 import AbstractView from '../view';
 import {playerWrapper, playerHandler} from '../includes/player';
 
+import {RED_TIMER_VALUE} from './game-data';
+import convertTime from '../util/convert-time';
 
 const genreAnswerWrapper = (id, src) => `
         <div class="genre-answer">
@@ -34,13 +36,16 @@ class GameGenreView extends AbstractView {
 
   bind() {
 
-    this.timeMinsElement = this.element.querySelector(`.timer-value-mins`);
-    this.timeSecsElement = this.element.querySelector(`.timer-value-secs`);
+    this.timerElement = this.element.querySelector(`.timer-value`);
+    this.timeMinsElement = this.timerElement.querySelector(`.timer-value-mins`);
+    this.timeSecsElement = this.timerElement.querySelector(`.timer-value-secs`);
 
-    const submitAnswerBtnElement = this.element.querySelector(`.genre-answer-send`);
-    submitAnswerBtnElement.disabled = true;
-
+    this.submitAnswerBtnElement = this.element.querySelector(`.genre-answer-send`);
     const answersFormElement = this.element.querySelector(`.genre`);
+    this.genreAnswersListElement = [...answersFormElement.answer];
+
+    this.submitAnswerBtnElement.disabled = true;
+
     const genrePlayersListElement = this.element.querySelectorAll(`.player`);
 
     [...genrePlayersListElement].forEach((trigger) => {
@@ -58,8 +63,7 @@ class GameGenreView extends AbstractView {
 
     answersFormElement.onsubmit = (e) => {
       e.preventDefault();
-      const genreAnswersList = [...answersFormElement.answer];
-      const isCorrect = genreAnswersList.reduce((result, currentAnswer) => {
+      const isCorrect = this.genreAnswersListElement.reduce((result, currentAnswer) => {
 
         if (this.question.answers[currentAnswer.id].genre === this.question.genre) {
           result = result && currentAnswer.checked;
@@ -75,15 +79,17 @@ class GameGenreView extends AbstractView {
   }
 
   onAnswersFormChange() {
-    const submitAnswerBtnElement = this.element.querySelector(`.genre-answer-send`);
-    const answersFormElement = this.element.querySelector(`.genre`);
-    const genreAnswersListElement = [...answersFormElement.answer];
-    submitAnswerBtnElement.disabled = !genreAnswersListElement.some((answer) => answer.checked);
+    this.submitAnswerBtnElement.disabled = !this.genreAnswersListElement.some((answer) => answer.checked);
   }
 
-  updateTime(minutes, seconds) {
-    this.timeMinsElement.textContent = minutes;
-    this.timeSecsElement.textContent = seconds;
+  updateTime(timeLeft) {
+    const timeInfo = convertTime(timeLeft);
+    this.timeMinsElement.textContent = `${timeInfo.minutesLeft}`;
+    this.timeSecsElement.textContent = `${timeInfo.secondsLeft}`.padStart(2, `0`);
+
+    if (timeLeft < RED_TIMER_VALUE) {
+      this.timerElement.classList.add(`timer-value--finished`);
+    }
   }
 
   static onAnswer(isCorrect) {

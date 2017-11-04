@@ -4,6 +4,7 @@ import {INIT_NOTES} from '../data/state-data';
 
 const QUICK_ANSWER_TIME = 30;
 const TOTAL_QUESTIONS = 10;
+const RED_TIMER_VALUE = 30;
 
 const QuestionTypes = {
 
@@ -167,4 +168,4 @@ const getDeclension = (num, titles) => {
 };
 
 
-export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, getQuestion, incrementQuestion, setNotes, getDeclension, QUICK_ANSWER_TIME, QuestionTypes, ResultTypes};
+export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, getQuestion, incrementQuestion, setNotes, getDeclension, QUICK_ANSWER_TIME, RED_TIMER_VALUE, QuestionTypes, ResultTypes};

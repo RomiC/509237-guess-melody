@@ -1,6 +1,5 @@
 import {InitialState} from '../data/state-data';
 import switchAppScreen from '../util/switch-app-screen';
-import convertTime from '../util/convert-time';
 
 import GameModel from './game-model';
 
@@ -86,8 +85,7 @@ export default class GameScreen {
 
   tick() {
     this.model.tick();
-    const timeInfo = convertTime(this.model.state.timeLeft);
-    this.level.updateTime(timeInfo.minutesLeft, timeInfo.secondsLeft);
+    this.level.updateTime(this.model.state.timeLeft);
 
     this.timer = setTimeout(() => this.tick(), 1000);
 
