@@ -70,10 +70,12 @@ const getResultString = (statistics = [], result) => {
   const statisticsCount = statistics.length;
   const betterResultsCount = statistics.findIndex((it) => it === result.scoreCount);
   const resultPlace = statisticsCount - betterResultsCount;
-  const resultPercent = (betterResultsCount / statisticsCount) * 100;
+  const resultPercent = Math.floor((betterResultsCount / statisticsCount) * 100);
 
+  const totalPlayersString = getDeclension(statisticsCount, [`игрока`, `игроков`, `игроков`]);
+  const betterPlayersString = getDeclension(resultPercent, [`игрока`, `игроков`, `игроков`]);
 
-  return `Вы заняли ${resultPlace}-ое место из ${statisticsCount} игроков. Это лучше чем у ${resultPercent}% игроков`;
+  return `Вы заняли ${resultPlace}-ое место из ${statisticsCount} ${totalPlayersString}. Это лучше чем у ${resultPercent}% ${betterPlayersString}`;
 };
 
 const getQuickAnswersCount = (answersArray) => {
@@ -94,10 +96,18 @@ const getQuickAnswersCount = (answersArray) => {
 
 const getStatString = (state, initialState, scoreCount) => {
   const timeInfo = convertTime(state.timeLeft);
+  const quickAnswersCount = getQuickAnswersCount(state.answers);
+  const mistakesCount = initialState.notesLeft - state.notesLeft;
 
-  return `За ${timeInfo.minutesSpend} минуты и ${timeInfo.secondsSpend} секунд
-   <br>вы набрали ${scoreCount} баллов (${getQuickAnswersCount(state.answers)} быстрых)
-   <br>совершив ${initialState.notesLeft - state.notesLeft} ошибки`.trim();
+  const minutesString = getDeclension(timeInfo.minutesSpend, [`минуту`, `минуты`, `минут`]);
+  const secondsString = getDeclension(timeInfo.secondsSpend, [`секунду`, `секунды`, `секунд`]);
+  const scoreString = getDeclension(scoreCount, [`балл`, `балла`, `баллов`]);
+  const quickAnswersString = getDeclension(quickAnswersCount, [`быстрый`, `быстрых`, `быстрых`]);
+  const mistakesString = getDeclension(mistakesCount, [`ошибку`, `ошибки`, `ошибок`]);
+
+  return `За ${timeInfo.minutesSpend} ${minutesString} и ${timeInfo.secondsSpend} ${secondsString}
+   <br>вы набрали ${scoreCount} ${scoreString} (${quickAnswersCount} ${quickAnswersString})
+   <br>совершив ${mistakesCount} ${mistakesString}`.trim();
 };
 
 const getTimer = (value) => {
@@ -138,5 +148,23 @@ const setNotes = (state, notes) => {
   return state;
 };
 
+const getDeclension = (num, titles) => {
 
-export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, getQuestion, incrementQuestion, setNotes, QUICK_ANSWER_TIME, QuestionTypes, ResultTypes};
+  if (num % 10 === 1 && num % 100 !== 11) {
+
+    // Минут
+    return titles[0];
+  } else if (num % 10 >= 2 && num % 10 <= 4 && (num % 100 < 10 || num % 100 >= 20)) {
+
+    // Минуту
+    return titles[1];
+  } else {
+
+    // Минуты
+    return titles[2];
+  }
+
+};
+
+
+export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, getQuestion, incrementQuestion, setNotes, getDeclension, QUICK_ANSWER_TIME, QuestionTypes, ResultTypes};
