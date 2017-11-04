@@ -46,9 +46,9 @@ class GameGenreView extends AbstractView {
 
     this.submitAnswerBtnElement.disabled = true;
 
-    const genrePlayersListElement = this.element.querySelectorAll(`.player`);
+    const genrePlayerElementsList = this.element.querySelectorAll(`.player`);
 
-    [...genrePlayersListElement].forEach((trigger) => {
+    [...genrePlayerElementsList].forEach((trigger) => {
 
       trigger.onclick = (e) => {
         e.preventDefault();
