@@ -1,8 +1,8 @@
 import AbstractView from '../view';
 import {playerWrapper, playerHandler} from '../includes/player';
 
-import {RED_TIMER_VALUE} from './game-data';
-import convertTime from '../util/convert-time';
+import {updateTimeElements} from './game-data';
+
 
 const genreAnswerWrapper = (id, src) => `
         <div class="genre-answer">
@@ -83,13 +83,7 @@ class GameGenreView extends AbstractView {
   }
 
   updateTime(timeLeft) {
-    const timeInfo = convertTime(timeLeft);
-    this.timeMinsElement.textContent = `${timeInfo.minutesLeft}`;
-    this.timeSecsElement.textContent = `${timeInfo.secondsLeft}`.padStart(2, `0`);
-
-    if (timeLeft < RED_TIMER_VALUE) {
-      this.timerElement.classList.add(`timer-value--finished`);
-    }
+    updateTimeElements(timeLeft, this.timerElement, this.timeMinsElement, this.timeSecsElement);
   }
 
   static onAnswer(isCorrect) {

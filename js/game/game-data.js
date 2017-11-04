@@ -167,5 +167,15 @@ const getDeclension = (num, titles) => {
 
 };
 
+const updateTimeElements = (timeLeft, timerElement, timeMinsElement, timeSecsElement) => {
+  const timeInfo = convertTime(timeLeft);
+  timeMinsElement.textContent = `${timeInfo.minutesLeft}`;
+  timeSecsElement.textContent = `${timeInfo.secondsLeft}`.padStart(2, `0`);
 
-export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, getQuestion, incrementQuestion, setNotes, getDeclension, QUICK_ANSWER_TIME, RED_TIMER_VALUE, QuestionTypes, ResultTypes};
+  if (timeLeft < RED_TIMER_VALUE) {
+    timerElement.classList.add(`timer-value--finished`);
+  }
+};
+
+
+export {getScore, getResultString, getStatString, getTimer, getQuickAnswersCount, getQuestion, incrementQuestion, setNotes, getDeclension, updateTimeElements, QUICK_ANSWER_TIME, RED_TIMER_VALUE, QuestionTypes, ResultTypes};
