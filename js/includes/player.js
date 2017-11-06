@@ -40,7 +40,9 @@ const fetchAudioAndPlay = (audio, button) => {
   fetch(audio.src)
       .then(() => {
         updateLoadingClasses(audio, false, true);
-        playAudio(audio, button);
+        if (isPlaying(button)) {
+          playAudio(audio, button);
+        }
       })
       .catch(() => {
         updateLoadingClasses(audio, false, false);
