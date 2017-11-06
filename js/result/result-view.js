@@ -1,8 +1,7 @@
 import AbstractView from '../view';
 import logo from '../includes/logo';
 import data from './result-data';
-import {getScore, getResultString, getStatString} from '../game/game-data';
-import {InitialState} from '../data/state-data';
+import {getScore, getResultString, getStatString, ResultTypes} from '../game/game-data';
 
 
 class ResultView extends AbstractView {
@@ -10,41 +9,35 @@ class ResultView extends AbstractView {
     super();
     this.state = state;
 
-    if (!state.timeLeft > 0) {
+    const scoreCount = getScore(state.answers, state.notesLeft);
+    const result = {
+      scoreCount,
+      notesLeft: state.notesLeft,
+      timeLeft: state.timeLeft,
+      result: state.result
+    };
 
-      const result = {
-        scoreCount: getScore(state.answers, state.notesLeft),
-        notesLeft: state.notesLeft,
-        timeLeft: state.timeLeft
-      };
-      data.timeOut.stat = getResultString(state.statistics, result);
+    switch (state.result) {
+      case ResultTypes.LOOSE_TIME:
 
-      this.resultData = data.timeOut;
+        data.timeOut.stat = getResultString(state.statistics, result);
 
-    } else if (!state.notesLeft > 0) {
+        this.resultData = data.timeOut;
+        break;
 
-      const result = {
-        scoreCount: getScore(state.answers, state.notesLeft),
-        notesLeft: state.notesLeft,
-        timeLeft: state.timeLeft
-      };
-      data.attemptsOut.stat = getResultString(state.statistics, result);
+      case ResultTypes.LOOSE_NOTES:
 
-      this.resultData = data.attemptsOut;
+        data.attemptsOut.stat = getResultString(state.statistics, result);
 
-    } else {
+        this.resultData = data.attemptsOut;
+        break;
 
-      const scoreCount = getScore(state.answers, state.notesLeft);
-      const result = {
-        scoreCount,
-        notesLeft: state.notesLeft,
-        timeLeft: state.timeLeft
-      };
+      case ResultTypes.WIN:
 
-      data.win.stat = getStatString(state, InitialState, scoreCount);
+        data.win.stat = getStatString(state, scoreCount);
 
-      data.win.comparison = getResultString(state.statistics, result);
-      this.resultData = data.win;
+        data.win.comparison = getResultString(state.statistics, result);
+        this.resultData = data.win;
     }
   }
 

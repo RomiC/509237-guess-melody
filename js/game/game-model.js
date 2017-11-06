@@ -1,5 +1,4 @@
 import {getTimer, incrementQuestion, setNotes, getQuestion} from './game-data';
-import {ResultTypes} from './game-data';
 
 
 class GameModel {
@@ -13,14 +12,10 @@ class GameModel {
     return Object.assign(this.state, newState);
   }
 
-  cleanState(resultWin = false) {
+  cleanState(result) {
     const {notesLeft, timeLeft, answers} = this.state;
 
-    if (resultWin) {
-      this.state = {notesLeft, timeLeft, answers, result: ResultTypes.WIN};
-    } else {
-      this.state = {notesLeft, timeLeft, answers, result: ResultTypes.LOOSE};
-    }
+    this.state = {notesLeft, timeLeft, answers, result};
   }
 
   incrementQuestionInState() {

@@ -76,36 +76,36 @@ const isLoading = (audio) => {
 
 const onPlayerClick = (trigger, e, view) => {
 
-  const audioElementsList = view.element.querySelectorAll(`audio`);
+  const audioElements = view.element.querySelectorAll(`audio`);
+  const selectedAudioElement = (e.target.classList.contains(`player-control`)) ? e.target.previousElementSibling : e.target.querySelector(`audio`);
 
-  let selectedAudioElement;
-  if (e.target.classList.contains(`player-control`)) {
-    selectedAudioElement = e.target.previousElementSibling;
-  } else {
-    selectedAudioElement = e.target.querySelector(`audio`);
-  }
-
-  audioElementsList.forEach((audio) => {
-    const button = audio.nextElementSibling;
+  for (const audioElement of audioElements) {
+    const button = audioElement.nextElementSibling;
     const trackIsPlaying = isPlaying(button);
-    const trackIsLoaded = isLoaded(audio);
-    const trackIsLoading = isLoading(audio);
+    const trackIsLoaded = isLoaded(audioElement);
+    const trackIsLoading = isLoading(audioElement);
 
-    if (audio.id === selectedAudioElement.id) {
+    if (audioElement.id === selectedAudioElement.id) {
       if (!trackIsPlaying) {
         if (!trackIsLoaded || (!trackIsLoaded && !trackIsLoading)) {
-          fetchAudioAndPlay(audio, button);
+          fetchAudioAndPlay(audioElement, button);
         } else {
-          playAudio(audio, button);
+          playAudio(audioElement, button);
         }
       } else {
-        pauseAudio(audio, button);
+        pauseAudio(audioElement, button);
       }
     } else {
-      pauseAudio(audio, button);
+      pauseAudio(audioElement, button);
     }
-  });
+  }
+};
+
+const playTrack = (playerElement) => {
+  const audioElement = playerElement.querySelector(`audio`);
+  const button = playerElement.querySelector(`button`);
+  fetchAudioAndPlay(audioElement, button);
 };
 
 
-export {getPlayerWrapper, onPlayerClick};
+export {getPlayerWrapper, onPlayerClick, playTrack};

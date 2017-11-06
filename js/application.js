@@ -24,7 +24,11 @@ const loadState = (dataString) => {
   try {
     return JSON.parse(b64Decode(dataString));
   } catch (e) {
-    return InitialState;
+    return {
+      notesLeft: InitialState.NOTES,
+      timeLeft: InitialState.TIME,
+      question: InitialState.QUESTION
+    };
   }
 };
 
@@ -57,7 +61,11 @@ export default class Application {
     location.hash = ControllerId.WELCOME;
   }
 
-  static startGame(state = InitialState) {
+  static startGame(state = {
+    notesLeft: InitialState.NOTES,
+    timeLeft: InitialState.TIME,
+    question: InitialState.QUESTION
+  }) {
     location.hash = `${ControllerId.GAME}=${saveState(state)}`;
   }
 

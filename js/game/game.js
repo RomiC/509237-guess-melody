@@ -9,7 +9,8 @@ import GameGenreView from './game-genre-view';
 
 import App from '../application';
 
-import {QuestionTypes} from './game-data';
+import {QuestionTypes, ResultTypes} from './game-data';
+
 
 const getView = (questions, state) => {
 
@@ -41,7 +42,7 @@ export default class GameScreen {
     this.model.questions = questions;
   }
 
-  init(state = InitialState) {
+  init(state = {notesLeft: InitialState.NOTES, timeLeft: InitialState.TIME, question: InitialState.QUESTION}) {
     this.model.updateState(state);
     this.changeQuestion(false);
   }
@@ -52,38 +53,40 @@ export default class GameScreen {
       this.model.incrementQuestionInState();
     }
     this.level = getView(this.model.questions, this.model.state);
-    const startedTime = this.model.state.timeLeft;
 
     this.stopTimer();
-
-    this.level.onAnswer = (isCorrect) => {
-
-      // Если попытки кончились - переход на экран результата без статуса выйгрыша
-      if (this.model.state.notesLeft <= 0 && !isCorrect) {
-        this.model.cleanState(false);
-        App.showResult(this.model.state);
-      } else if (!this.model.checkNextQuestionAvailable()) {
-
-        // Если вопросов больше нет - переход на экран результата со статусом выйгрыша
-        this.model.cleanState(true);
-        App.showResult(this.model.state);
-      } else {
-
-        //  Играем дальше
-        if (!isCorrect) {
-          this.model.makeMistake();
-        }
-
-        this.model.pushAnswer([+isCorrect, startedTime - this.model.state.timeLeft]);
-
-        switchAppScreen(this.level);
-        this.changeQuestion();
-      }
-    };
+    this.level.onAnswer = (isCorrect) => this.onAnswer(isCorrect);
 
     switchAppScreen(this.level);
 
     this.tick();
+  }
+
+  onAnswer(isCorrect) {
+
+    const startedTime = this.model.state.timeLeft;
+
+    // Если попытки кончились - переход на экран результата со статусом пройгрыша по количеству попыток
+    if (this.model.state.notesLeft <= 0 && !isCorrect) {
+      this.model.cleanState(ResultTypes.LOOSE_NOTES);
+      App.showResult(this.model.state);
+    } else if (!this.model.checkNextQuestionAvailable()) {
+
+      // Если вопросов больше нет - переход на экран результата со статусом выйгрыша
+      this.model.cleanState(ResultTypes.WIN);
+      App.showResult(this.model.state);
+    } else {
+
+      //  Играем дальше
+      if (!isCorrect) {
+        this.model.makeMistake();
+      }
+
+      this.model.pushAnswer([+isCorrect, startedTime - this.model.state.timeLeft]);
+
+      switchAppScreen(this.level);
+      this.changeQuestion();
+    }
   }
 
   tick() {
@@ -92,10 +95,10 @@ export default class GameScreen {
 
     this.timer = setTimeout(() => this.tick(), 1000);
 
-    // Если время вышло - переход на экран результата без статуса выйгрыша
+    // Если время вышло - переход на экран результата без статуса пройгрыша по времени
     if (this.model.state.timeLeft <= 0) {
       this.stopTimer();
-      this.model.cleanState(false);
+      this.model.cleanState(ResultTypes.LOOSE_TIME);
       App.showResult(this.model.state);
     }
   }

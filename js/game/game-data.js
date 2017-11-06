@@ -14,7 +14,8 @@ const QuestionTypes = {
 
 const ResultTypes = {
   WIN: `win`,
-  LOOSE: `loose`
+  LOOSE_TIME: `looseTime`,
+  LOOSE_NOTES: `looseNotes`
 };
 
 const getScore = (answersArray = [], notesLeft = 0, totalQuestions = TOTAL_QUESTIONS) => {
@@ -37,31 +38,26 @@ const getScore = (answersArray = [], notesLeft = 0, totalQuestions = TOTAL_QUEST
     let scoreAnswer = 0;
 
     if (currentAnswer[0]) {
-      // За правильный ответ 1 балл
-      if (currentAnswer[1] >= QUICK_ANSWER_TIME) {
-        scoreAnswer = 1;
-      } else {
-        // За быстрый правильный ответ (менее 30 секунд) — 2 балла
-        scoreAnswer = 2;
-      }
+      // За правильный ответ 1 балл, За быстрый правильный ответ (менее 30 секунд) — 2 балла
+      scoreAnswer = (currentAnswer[1] >= QUICK_ANSWER_TIME) ? 1 : 2;
     }
 
     return accumulator + scoreAnswer;
   }, 0);
 
   // За каждую соверешнную ошибку вычитается 2 балла, но в 0 уйти нельзя
-  scoreCount = Math.max(0, scoreCount - (InitialState.notesLeft - notesLeft));
+  scoreCount = Math.max(0, scoreCount - (InitialState.NOTES - notesLeft));
 
   return scoreCount;
 };
 
 const getResultString = (statistics = [], result) => {
 
-  if (result.timeLeft === 0) {
+  if (result.result === ResultTypes.LOOSE_TIME) {
     return `Время вышло!<br>Вы не успели отгадать все мелодии`;
   }
 
-  if (result.notesLeft === 0) {
+  if (result.result === ResultTypes.LOOSE_NOTES) {
     return `У вас закончились все попытки.<br>Ничего, повезёт в следующий раз!`;
   }
 
@@ -95,10 +91,10 @@ const getQuickAnswersCount = (answersArray) => {
   }, 0);
 };
 
-const getStatString = (state, initialState, scoreCount) => {
+const getStatString = (state, scoreCount, initialNotes = InitialState.NOTES) => {
   const timeInfo = convertTime(state.timeLeft);
   const quickAnswersCount = getQuickAnswersCount(state.answers);
-  const mistakesCount = initialState.notesLeft - state.notesLeft;
+  const mistakesCount = initialNotes - state.notesLeft;
 
   const minutesString = getDeclension(timeInfo.minutesSpend, [`минуту`, `минуты`, `минут`]);
   const secondsString = getDeclension(timeInfo.secondsSpend, [`секунду`, `секунды`, `секунд`]);

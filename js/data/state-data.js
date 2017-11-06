@@ -1,7 +1,7 @@
 const InitialState = {
-  question: 0,
-  notesLeft: 3,
-  timeLeft: 300,
+  QUESTION: 0,
+  NOTES: 3,
+  TIME: 300,
 };
 
 

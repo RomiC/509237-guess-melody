@@ -9,10 +9,7 @@ export default class Loader {
   static loadData() {
     return fetch(`${SERVER_URL}/${ApiPaths.QUESTIONS}`).
         then((res) => {
-          if (res.ok) {
-            return res.json();
-          }
-          return Promise.reject();
+          return (res.ok) ? res.json() : Promise.reject();
         });
   }
 

@@ -48,13 +48,12 @@ class GameGenreView extends AbstractView {
 
     const genrePlayerElements = this.element.querySelectorAll(`.player`);
 
-    [...genrePlayerElements].forEach((trigger) => {
-
-      trigger.onclick = (e) => {
+    for (const genrePlayerElement of genrePlayerElements) {
+      genrePlayerElement.onclick = (e) => {
         e.preventDefault();
-        onPlayerClick(trigger, e, this);
+        onPlayerClick(genrePlayerElement, e, this);
       };
-    });
+    }
 
     answersFormElement.onchange = (e) => {
       e.preventDefault();
@@ -65,11 +64,7 @@ class GameGenreView extends AbstractView {
       e.preventDefault();
       const isCorrect = this.genreAnswersListElement.reduce((result, currentAnswer) => {
 
-        if (this.question.answers[currentAnswer.id].genre === this.question.genre) {
-          result = result && currentAnswer.checked;
-        } else {
-          result = result && !currentAnswer.checked;
-        }
+        result = (this.question.answers[currentAnswer.id].genre === this.question.genre) ? result && currentAnswer.checked : result && !currentAnswer.checked;
 
         return result;
       }, true);

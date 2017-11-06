@@ -8,7 +8,7 @@ import App from '../application';
 class WelcomeScreen {
 
   init() {
-    this.state = {notesLeft: InitialState.notesLeft, timeLeft: InitialState.timeLeft};
+    this.state = {notesLeft: InitialState.NOTES, timeLeft: InitialState.TIME};
 
     this.view = new WelcomeView(this.state);
     switchAppScreen(this.view);

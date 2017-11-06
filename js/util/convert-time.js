@@ -1,7 +1,7 @@
 import {InitialState} from '../data/state-data';
 
 
-const convertTime = (timeLeft, initTime = InitialState.timeLeft) => {
+const convertTime = (timeLeft, initTime = InitialState.TIME) => {
   const timeSpend = initTime - timeLeft;
   const minutesLeft = Math.floor(timeLeft / 60);
   const secondsLeft = timeLeft - minutesLeft * 60;
