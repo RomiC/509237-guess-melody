@@ -1,5 +1,5 @@
 import AbstractView from '../view';
-import {getPlayerWrapper, onPlayerClick} from '../includes/player';
+import {getPlayerWrapper, onPlayerClick, playTrack} from '../includes/player';
 
 import {updateTimeElements} from './game-data';
 
@@ -47,23 +47,22 @@ class GameArtistView extends AbstractView {
     this.timeSecsElement = this.timerElement.querySelector(`.timer-value-secs`);
     const artistAnswerElements = this.element.querySelectorAll(`.main-answer-r`);
 
-    [...artistAnswerElements].forEach((trigger) => {
-      trigger.onclick = (e) => {
+    for (const artistAnswerElement of artistAnswerElements) {
+      artistAnswerElement.onclick = (e) => {
         e.preventDefault();
         const isCorrect = this.question.answers[e.target.id].isCorrect;
         this.onAnswer(isCorrect);
       };
-    });
+    }
 
-    const artistPlayerElements = this.element.querySelectorAll(`.player`);
+    const artistPlayerElement = this.element.querySelector(`.player`);
 
-    [...artistPlayerElements].forEach((trigger) => {
-      trigger.onclick = (e) => {
-        e.preventDefault();
-        onPlayerClick(trigger, e, this);
-      };
+    playTrack(artistPlayerElement);
 
-    });
+    artistPlayerElement.onclick = (e) => {
+      e.preventDefault();
+      onPlayerClick(artistPlayerElement, e, this);
+    };
   }
 
   updateTime(timeLeft) {

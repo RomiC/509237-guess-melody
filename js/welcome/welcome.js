@@ -1,5 +1,4 @@
 import switchAppScreen from '../util/switch-app-screen';
-import {InitialState} from '../data/state-data';
 
 import WelcomeView from './welcome-view';
 import App from '../application';
@@ -7,10 +6,9 @@ import App from '../application';
 
 class WelcomeScreen {
 
-  init() {
-    this.state = {notesLeft: InitialState.notesLeft, timeLeft: InitialState.timeLeft};
+  init(state) {
 
-    this.view = new WelcomeView(this.state);
+    this.view = new WelcomeView(state);
     switchAppScreen(this.view);
 
     this.view.onStart = () => {

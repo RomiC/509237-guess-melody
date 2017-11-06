@@ -32,6 +32,6 @@ export default class HeaderView extends AbstractView {
   get template() {
     return `
     ${getHeaderSvgCircle(this.state)}
-    ${getHeaderMistakes(InitialState.notesLeft - this.state.notesLeft)}`.trim();
+    ${getHeaderMistakes(InitialState.NOTES - this.state.notesLeft)}`.trim();
   }
 }
