@@ -1,6 +1,8 @@
 import {InitialState} from './data/state-data';
 import {ResultTypes} from './game/game-data';
 import Loader from './loader';
+import AudioPreloader from './audio-preloader';
+
 import switchAppScreen from './util/switch-app-screen';
 import {b64Encode, b64Decode} from './util/b64encoding';
 
@@ -24,7 +26,11 @@ const loadState = (dataString) => {
   try {
     return JSON.parse(b64Decode(dataString));
   } catch (e) {
-    return InitialState;
+    return {
+      notesLeft: InitialState.NOTES,
+      timeLeft: InitialState.TIME,
+      question: InitialState.QUESTION
+    };
   }
 };
 
@@ -57,7 +63,12 @@ export default class Application {
     location.hash = ControllerId.WELCOME;
   }
 
-  static startGame(state = InitialState) {
+  static startGame(state = {
+    notesLeft: InitialState.NOTES,
+    timeLeft: InitialState.TIME,
+    question: InitialState.QUESTION,
+    answers: []
+  }) {
     location.hash = `${ControllerId.GAME}=${saveState(state)}`;
   }
 
@@ -86,8 +97,13 @@ export default class Application {
     const splash = new SplashScreen();
     switchAppScreen(splash);
 
+    let data = {};
     Loader.loadData()
-        .then((jsonData) => Application.init(jsonData))
+        .then((jsonData) => {
+          data = jsonData;
+          return AudioPreloader.preloadAudios(data);
+        })
+        .then(() => Application.init(data))
         .catch(window.console.error);
   }
 }

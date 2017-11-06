@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {getScore, getResultString, getTimer, getQuickAnswersCount, getDeclension, QUICK_ANSWER_TIME} from './game-data';
+import {getScore, getResultString, getTimer, getQuickAnswersCount, getDeclension, QUICK_ANSWER_TIME, ResultTypes} from './game-data';
 
 
 describe(`getScore`, () => {
@@ -29,27 +29,27 @@ describe(`getScore`, () => {
 describe(`getResultString`, () => {
   it(`Time Out`, () => {
     assert.equal(`Время вышло!<br>Вы не успели отгадать все мелодии`,
-        getResultString([4, 5, 8, 10, 11], {scoreCount: 0, notesLeft: 3, timeLeft: 0}));
+        getResultString([4, 5, 8, 10, 11], {scoreCount: 0, notesLeft: 3, timeLeft: 0, result: ResultTypes.LOOSE_TIME}));
   });
   it(`Attempts Out`, () => {
     assert.equal(`У вас закончились все попытки.<br>Ничего, повезёт в следующий раз!`,
-        getResultString([4, 5, 8, 10, 11], {scoreCount: 0, notesLeft: 0, timeLeft: 30}));
+        getResultString([4, 5, 8, 10, 11], {scoreCount: 0, notesLeft: 0, timeLeft: 30, result: ResultTypes.LOOSE_NOTES}));
   });
   it(`2-nd place with 5 gamers`, () => {
     assert.equal(`Вы заняли 2-ое место из 5 игроков. Это лучше чем у 60% игроков`,
-        getResultString([4, 5, 8, 11], {scoreCount: 10, notesLeft: 3, timeLeft: 30}));
+        getResultString([4, 5, 8, 11], {scoreCount: 10, notesLeft: 3, timeLeft: 30, result: ResultTypes.WIN}));
   });
   it(`1-nd place with 5 gamers`, () => {
     assert.equal(`Вы заняли 1-ое место из 5 игроков. Это лучше чем у 80% игроков`,
-        getResultString([4, 5, 8, 9], {scoreCount: 10, notesLeft: 3, timeLeft: 30}));
+        getResultString([4, 5, 8, 9], {scoreCount: 10, notesLeft: 3, timeLeft: 30, result: ResultTypes.WIN}));
   });
   it(`5-nd place with 5 gamers`, () => {
     assert.equal(`Вы заняли 5-ое место из 5 игроков. Это лучше чем у 0% игроков`,
-        getResultString([4, 5, 8, 9], {scoreCount: 3, notesLeft: 3, timeLeft: 30}));
+        getResultString([4, 5, 8, 9], {scoreCount: 3, notesLeft: 3, timeLeft: 30, result: ResultTypes.WIN}));
   });
   it(`1-st place with 0 gamers`, () => {
     assert.equal(`Вы заняли 1-ое место из 1 игрока. Это лучше чем у 0% игроков`,
-        getResultString([], {scoreCount: 3, notesLeft: 3, timeLeft: 30}));
+        getResultString([], {scoreCount: 3, notesLeft: 3, timeLeft: 30, result: ResultTypes.WIN}));
   });
 });
 
