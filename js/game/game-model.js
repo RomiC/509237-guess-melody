@@ -9,7 +9,7 @@ class GameModel {
   }
 
   updateState(newState) {
-    return Object.assign(this.state, newState);
+    this.state = Object.assign({}, newState);
   }
 
   cleanState(result) {

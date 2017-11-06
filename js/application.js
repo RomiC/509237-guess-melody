@@ -66,7 +66,8 @@ export default class Application {
   static startGame(state = {
     notesLeft: InitialState.NOTES,
     timeLeft: InitialState.TIME,
-    question: InitialState.QUESTION
+    question: InitialState.QUESTION,
+    answers: []
   }) {
     location.hash = `${ControllerId.GAME}=${saveState(state)}`;
   }

@@ -42,7 +42,11 @@ export default class GameScreen {
     this.model.questions = questions;
   }
 
-  init(state = {notesLeft: InitialState.NOTES, timeLeft: InitialState.TIME, question: InitialState.QUESTION}) {
+  init(state = {notesLeft: InitialState.NOTES,
+    timeLeft: InitialState.TIME,
+    question: InitialState.QUESTION,
+    answers: []
+  }) {
     this.model.updateState(state);
     this.changeQuestion(false);
   }
@@ -73,6 +77,7 @@ export default class GameScreen {
     } else if (!this.model.checkNextQuestionAvailable()) {
 
       // Если вопросов больше нет - переход на экран результата со статусом выйгрыша
+      this.model.pushAnswer([+isCorrect, startedTime - this.model.state.timeLeft]);
       this.model.cleanState(ResultTypes.WIN);
       App.showResult(this.model.state);
     } else {
