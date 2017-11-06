@@ -1,6 +1,8 @@
 import {InitialState} from './data/state-data';
 import {ResultTypes} from './game/game-data';
 import Loader from './loader';
+import AudioPreloader from './audio-preloader';
+
 import switchAppScreen from './util/switch-app-screen';
 import {b64Encode, b64Decode} from './util/b64encoding';
 
@@ -94,8 +96,13 @@ export default class Application {
     const splash = new SplashScreen();
     switchAppScreen(splash);
 
+    let data = {};
     Loader.loadData()
-        .then((jsonData) => Application.init(jsonData))
+        .then((jsonData) => {
+          data = jsonData;
+          return AudioPreloader.preloadAudios(data);
+        })
+        .then(() => Application.init(data))
         .catch(window.console.error);
   }
 }
